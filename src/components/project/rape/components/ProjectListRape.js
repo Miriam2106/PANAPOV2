@@ -11,20 +11,14 @@ import {
 import FeatherIcon from "feather-icons-react";
 import DataTable from "react-data-table-component";
 import { AlertData } from "../../../../shared/components/alertData"
-import { ProjectDetails } from "../../coordinador/components/ProjectDetails"; 
+import { ProjectDetails } from "../../coordinador/components/ProjectDetails";
 import { CustomLoader } from "../../../../shared/components/CustomLoader";
 import { FilterComponent } from "../../../../shared/components/FilterComponent";
-import Alert, {
-  msjConfirmacion,
-  titleConfirmacion,
-  titleError,
-  msjError,
-  msjExito,
-  titleExito,
-} from "../../../../shared/plugins/alert";
 import { useNavigate } from "react-router-dom";
 import { ProjectCreate } from "./ProjectCreate";
 import axios from "../../../../shared/plugins/axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faFile, faInfo} from '@fortawesome/free-solid-svg-icons'
 
 export const ProjectListRape = () => {
   const [filterText, setFilterText] = useState("");
@@ -62,19 +56,35 @@ export const ProjectListRape = () => {
       .then((response) => {
         let data = response.data;
         console.log(data);
-        let projectTemp = []
+        let arrTemp = []
         for (let r = 0; r < data.length; r++) {
           for (let m = 0; m < data[r].team.length; m++) {
             let temp = data[r];
             console.log(data[r].team[m].rolProject.description + " " + data[r].team[m].person.email)
             if (data[r].team[m].rolProject.description === "RAPE" && data[r].team[m].person.email === username) {
-              projectTemp.push(temp)
+              arrTemp.push(temp)
             }
           }
-          //console.log(data[i].team[m])
+        }
+        let projectTemp = []
+        for (let m = 0; m < arrTemp.length; m++) {
+          if (arrTemp[m].priority === "Alta") {
+            projectTemp.push(arrTemp[m])
+          }
+
+        }
+        for (let m = 0; m < arrTemp.length; m++) {
+          if (arrTemp[m].priority === "Media") {
+            projectTemp.push(arrTemp[m])
+
+          }
+        }
+        for (let m = 0; m < arrTemp.length; m++) {
+          if (arrTemp[m].priority === "Baja") {
+            projectTemp.push(arrTemp[m])
+          }
         }
         setProjectsRape(projectTemp);
-        console.log(projectTemp);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -183,7 +193,7 @@ export const ProjectListRape = () => {
               setIsOpenDetails(true);
             }}
           >
-            <FeatherIcon icon="info" />
+            <FontAwesomeIcon className="btnS" icon={faInfo} size="lg" />
           </Button>
         </div>
       ),
@@ -197,6 +207,7 @@ export const ProjectListRape = () => {
             size="md"
             onClick={() => {
               setValues(row);
+              console.log(row)
               setIsOpenCreateReport(true);
             }}
           >
@@ -206,7 +217,7 @@ export const ProjectListRape = () => {
       ),
     },
     {
-      name:  <h6>Ver reportes</h6>,
+      name: <h6>Ver reportes</h6>,
       cell: (row) => (
         <div>
           <Button
@@ -217,7 +228,7 @@ export const ProjectListRape = () => {
               handleReport();
             }}
           >
-            <FeatherIcon icon="file" />
+            <FontAwesomeIcon icon={faFile} size="lg" className="btnS" />
           </Button>
         </div>
       ),
@@ -287,8 +298,8 @@ export const ProjectListRape = () => {
                 />
                 <ProjectCreate
                   isOpenCreateReport={isOpenCreateReport}
-                  handleClose={() => setIsOpenCreateReport(false)}
-                  setProjectsRape={setProjectsRape}
+                  handleClose={setIsOpenCreateReport}
+                  getProjectsRape={getProjectsRape}
                   {...values}
                 />
               </Card.Body>

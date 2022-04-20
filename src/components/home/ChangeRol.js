@@ -12,13 +12,20 @@ import { faUser, faFile, faInfo } from '@fortawesome/free-solid-svg-icons'
 library.add(faUser, faFile, faInfo);
 
 export const ChangeRol = () => {
+  const navigation = useNavigate();
+    const { authContext } = useContext(AuthContext);
+
+    const logout = () =>{
+        authContext.signOut();
+        navigation("/", { replace: true });
+    }
+
   let coordinador = localStorage.getItem("coordinador")
   let rd = localStorage.getItem("rd")
   let rape = localStorage.getItem("rape")
   let directivo = localStorage.getItem("directivo")
   let rolActivo = localStorage.getItem("rolActive");
-  const { authContext } = useContext(AuthContext);
-  const navigation = useNavigate();
+  let username = localStorage.getItem("username");
 
   useEffect(() => {
     document.title = "PANAPO | Mis roles";
@@ -40,7 +47,13 @@ export const ChangeRol = () => {
           <div class="container-fluid">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <h1 class="font-weight-bold">Mis roles</h1>
+                <h1 class="font-weight-bold mb-2">Configuración</h1>
+                Usuario: {username}
+              </div>
+              <div class="col-sm-6 text-end">
+                <Button className="btn" onClick={logout} style={{ background: "#042B61", borderColor: "#042B61" }}>
+                  Cerrar sesión
+                </Button>
               </div>
             </div>
           </div>
@@ -54,7 +67,7 @@ export const ChangeRol = () => {
                     <Col >
                       <h3>RD</h3>
                       <div className='mt-4 mb-4'>
-                      <FontAwesomeIcon icon={faUser} size="5x"/>
+                        <FontAwesomeIcon icon={faUser} size="5x" />
                       </div>
                       <Button type="submit" style={{ background: "#042B61", borderColor: "#042B61" }}
                         onClick={() => {
@@ -78,7 +91,7 @@ export const ChangeRol = () => {
                     <Col >
                       <h3>RAPE</h3>
                       <div className='mt-4 mb-4'>
-                      <FontAwesomeIcon icon={faUser} size="5x"/>
+                        <FontAwesomeIcon icon={faUser} size="5x" />
                       </div>
                       <Button type="submit" style={{ background: "#042B61", borderColor: "#042B61" }}
                         onClick={() => {
@@ -102,7 +115,7 @@ export const ChangeRol = () => {
                     <Col >
                       <h3>Directivo</h3>
                       <div className='mt-4 mb-4'>
-                      <FontAwesomeIcon icon={faUser} size="5x"/>
+                        <FontAwesomeIcon icon={faUser} size="5x" />
                       </div>
                       <Button type="submit" style={{ background: "#042B61", borderColor: "#042B61" }}
                         onClick={() => {
@@ -126,7 +139,7 @@ export const ChangeRol = () => {
                     <Col >
                       <h3>Coordinador</h3>
                       <div className='mt-4 mb-4'>
-                      <FontAwesomeIcon icon={faUser} size="5x"/>
+                        <FontAwesomeIcon icon={faUser} size="5x" />
                       </div>
                       <Button type="submit" style={{ background: "#042B61", borderColor: "#042B61" }}
                         onClick={() => {

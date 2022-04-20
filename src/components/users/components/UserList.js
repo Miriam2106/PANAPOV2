@@ -25,8 +25,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEdit, faFile, faInfo, faPlay } from '@fortawesome/free-solid-svg-icons'
 
-
-
 export const UserList = () => {
     const [filterText, setFilterText] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -50,8 +48,9 @@ export const UserList = () => {
     const getPerson = () => {
         axios({ url: "/person/", method: "GET" })
             .then((response) => {
-                console.log(response);
-                setPerson1(response.data);
+                let data = response.data;
+                let tempData = data.filter(item => item.profession.description !== "Directivo")
+                setPerson1(tempData);
                 setIsLoading(false);
             })
             .catch((error) => {
@@ -64,7 +63,7 @@ export const UserList = () => {
             .then((response) => {
                 console.log(response);
                 let data = response.data;
-                let rolesTemp = data.filter(item => item.description !== "Directivo")
+                let rolesTemp = data.filter(item => item.description !== "Directivo" && item.description !== "Coordinador")
                 setRol(rolesTemp);
                 setIsLoading(false);
             })
@@ -74,41 +73,47 @@ export const UserList = () => {
     };
 
     const getUser = () => {
-        axios({ url: "/user/", method: "GET" })
+        return axios({ url: "/user/", method: "GET" })
             .then((response) => {
                 let data = response.data;
-                let directivesTemp = data.filter(item => item.person.profession.description !== "Directivo")
-                setUsers(directivesTemp);
-                console.log(directivesTemp)
+                let userTemp = data.filter(item => item.person.profession.description !== "Directivo")
+                let tempData = []
+                for (let i = 0; i < userTemp.length; i++) {
+                    for (let r = 0; r < userTemp[i].authorities.length; r++) {
+                        let newData = {
+                            ...userTemp[i],
+                            authority: userTemp[i].authorities[r].description
+                        }
+                        tempData.push(newData)
+                    }
+                }
+                setUsers(tempData);
+                console.log(tempData)
                 setIsLoading(false);
+                return response;
             })
             .catch((error) => {
-                console.log(error);
+
             });
     };
-
-    //VIDEO
-    const handleEmail = (event) => {
-        const getEmailId = event.target.value;
-        console.log(getEmailId);
-    }
 
     const columns = [
         {
             name: <h6 >#</h6>,
             cell: (row, index) => <div><h6>{index + 1}</h6></div>,
-            width: "4%"
+            width: "6%"
         },
         {
-            name: <h6 className="text-center">Nombre del Usuario</h6>,
-            cell: (row) => <div className="txt4">{row.person.name + " "}</div>,
+            name: <h6 className="text-center">Nombre del usuario</h6>,
+            cell: (row) => <div className="txt4">{row.person.name + " " + row.person.surname + " " + row.person.secondSurname}</div>,
+            width: "30%"
         },
         {
-            name: (
-                <div>
-                    <h6>Detalles</h6>
-                </div>
-            ),
+            name: <h6 className="text-center">Rol</h6>,
+            cell: (row) => <div className="txt4">{row.authority}</div>,
+        },
+        {
+            name: (<h6>Detalles</h6>),
             cell: (row) => (
                 <div>
                     <Button
@@ -119,17 +124,13 @@ export const UserList = () => {
                             setIsOpenDetails(true);
                         }}
                     >
-                        <FontAwesomeIcon className="btnS" icon={faInfo} size="lg"/>
+                        <FontAwesomeIcon className="btnS" icon={faInfo} size="lg" />
                     </Button>
                 </div>
             ),
         },
         {
-            name: (
-                <div>
-                    <h6>Modificar</h6>
-                </div>
-            ),
+            name: (<h6>Modificar</h6>),
             cell: (row) => (
                 <div>
                     <Button
@@ -140,7 +141,7 @@ export const UserList = () => {
                             setIsOpenUpdate(true);
                         }}
                     >
-                        <FontAwesomeIcon  icon={faEdit} size="lg" />
+                        <FontAwesomeIcon icon={faEdit} size="lg" />
                     </Button>
                 </div>
             ),
@@ -246,40 +247,19 @@ export const UserList = () => {
 
     const formik = useFormik({
         initialValues: {
-            email: "",
+            username: "",
             authorities: "",
         },
         validationSchema: yup.object().shape({
-            email: yup
+            username: yup
                 .string()
                 .required("Campo obligatorio"),
             authorities: yup
                 .string()
                 .required("Campo obligatorio"),
-
         }),
         onSubmit: (values) => {
-            const person2 = {
-                password: values.email,
-                // person: {
-                //     name: values.name,
-                //     surname: values.surname,
-                //     secondSurname: values.secondSurname,
-                //     email: values.email,
-                //     profession: values.profession,
-                //     status: {
-                //         id: 1,
-                //         description: "Activo"
-                //     }
-                // },
-                authorities: values.authorities,
-                status: {
-                    id: 1,
-                    description: "Activo"
-                }
-
-            };
-            console.log(person2)
+            console.log(values.authorities)
             Alert.fire({
                 title: titleConfirmacion,
                 text: msjConfirmacion,
@@ -292,33 +272,119 @@ export const UserList = () => {
                 showLoaderOnConfirm: true,
                 icon: "warning",
                 preConfirm: () => {
-                    return axios({ url: "/user/", method: "POST", data: JSON.stringify(person2) })
+                    axios({ url: "/user/", method: "GET" })
                         .then((response) => {
-                            console.log(response)
-                            if (!response.error) {
-                                getUser();
-                                Alert.fire({
-                                    title: titleExito,
-                                    text: msjExito,
-                                    confirmButtonColor: "#198754",
-                                    icon: "success",
-                                    confirmButtonText: "Aceptar",
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        handleCloseForm();
+                            let exist = false;
+                            let id;
+                            let auth = [];
+                            let error = false;
+                            let data = []
+                            for (let i = 0; i < response.data.length; i++) {
+                                if (response.data[i].person.id === parseInt(values.username)) {
+                                    for (let m = 0; m < response.data[i].authorities.length; m++) {
+                                        if (response.data[i].authorities[m].id === parseInt(values.authorities)) {
+                                            error = true;
+                                        } else {
+                                            exist = true;
+                                            auth = response.data[i].authorities;
+                                            id = response.data[i].person.id;
+                                            data = response.data[i]
+                                        }
                                     }
-                                });
+                                }
                             }
-                            return response;
-                        }).catch((error) => {
-                            console.log(error)
-                            Alert.fire({
-                                title: titleError,
-                                text: msjError,
-                                cancelButtonColor: "#198754",
-                                icon: "error",
-                                confirmButtonText: "Aceptar"
-                            });
+                            if (error) {
+                                Alert.fire({
+                                    title: "La persona ya tiene este rol",
+                                    text: msjError,
+                                    cancelButtonColor: "#198754",
+                                    icon: "error",
+                                    confirmButtonText: "Aceptar"
+                                });
+                                getUser();
+                                getPerson();
+                                getRol();
+                            } else if (exist) {
+                            
+                                auth.push({
+                                    id: parseInt(values.authorities),
+                                })
+                                data = {
+                                    ...data,
+                                    authorities: auth
+                                }
+                                console.log(data)
+                                axios({ url: "/user/rol/", method: "PUT", data: JSON.stringify(data) })
+                                    .then((response) => {
+                                        console.log(response)
+                                        if (!response.error) {
+                                            getUser();
+                                            getPerson();
+                                            getRol();
+                                            Alert.fire({
+                                                title: titleExito,
+                                                confirmButtonColor: "#198754",
+                                                icon: "success",
+                                                confirmButtonText: "Aceptar",
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    handleCloseForm();
+                                                }
+                                            });
+                                        }
+                                    }).catch((error) => {
+                                        console.log(error)
+                                    });
+                            } else {
+                                axios({ url: "/person/" + values.username, method: "GET" })
+                                    .then((response) => {
+                                        console.log(response)
+                                        if (!response.error) {
+                                            let insert = {
+                                                authorities: [
+                                                    ...auth,
+                                                    {
+                                                    id: values.authorities,
+                                                    }
+                                                ],
+                                                username: response.data.email
+                                            }
+                                            axios({ url: "/user/save/", method: "POST", data: JSON.stringify(insert) })
+                                                .then((response) => {
+                                                    console.log(response)
+                                                    if (!response.error) {
+                                                        getUser();
+                                                        getPerson();
+                                                        getRol();
+                                                        Alert.fire({
+                                                            title: titleExito,
+                                                            confirmButtonColor: "#198754",
+                                                            icon: "success",
+                                                            confirmButtonText: "Aceptar",
+                                                        }).then((result) => {
+                                                            if (result.isConfirmed) {
+                                                                handleCloseForm();
+                                                            }
+                                                        });
+                                                    }
+                                                }).catch((error) => {
+                                                    console.log(error)
+                                                    Alert.fire({
+                                                        title: titleError,
+                                                        text: msjError,
+                                                        cancelButtonColor: "#198754",
+                                                        icon: "error",
+                                                        confirmButtonText: "Aceptar"
+                                                    });
+                                                });
+                                        }
+                                    }).catch((error) => {
+                                        console.log(error)
+                                    });
+                            }
+                        })
+                        .catch((error) => {
+
                         });
                 },
                 backdrop: true,
@@ -378,7 +444,7 @@ export const UserList = () => {
                                                         <option value="">Seleccione una opción</option>
                                                         {
                                                             rol.map((rols) => (
-                                                                <option key={rols.id} value={rols.id} >{rols.description}</option>
+                                                                <option key={rols.id} value={rols.id}>{rols.description}</option>
                                                             ))
                                                         }
                                                     </Form.Select>
@@ -388,17 +454,16 @@ export const UserList = () => {
                                                 </Form.Group>
                                                 <Form.Group className="col-md-6 mb-4" >
                                                     <Form.Label className="font-weight-normal">Correo<span className="text-danger">*</span></Form.Label>
-                                                    
-                                                    <Form.Select name="email" value={formik.values.email} onChange={formik.handleChange}>
-                                                        <option>Seleccione una opción</option>
+                                                    <Form.Select name="username" value={formik.values.username} onChange={formik.handleChange}>
+                                                        <option value="">Seleccione una opción</option>
                                                         {
                                                             person1.map((personemail) => (
                                                                 <option key={personemail.id} value={personemail.id} >{personemail.email}</option>
                                                             ))
                                                         }
                                                     </Form.Select>
-                                                    {formik.errors.email ? (
-                                                        <span className="text-danger">{formik.errors.email}</span>
+                                                    {formik.errors.username ? (
+                                                        <span className="text-danger">{formik.errors.username}</span>
                                                     ) : null}
                                                 </Form.Group>
                                                 <br />
@@ -446,8 +511,7 @@ export const UserList = () => {
                                 />
                                 <UserDetails
                                     isOpenDetails={isOpenDetails}
-                                    handleClose={() => setIsOpenDetails(false)}
-                                    setUsers={setUsers}
+                                    handleClose={setIsOpenDetails}
                                     {...values}
                                 />
 

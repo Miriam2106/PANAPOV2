@@ -92,35 +92,35 @@ export const ReportDetails = ({
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group>
+            <Form.Group className="mb-4">
               <Form.Label className="font-weight-normal">Inicio</Form.Label>
               <ProgressBar now={avance.inicio} variant="success" />
-              <small>% completado</small>
+              <small>{avance.inicio}% completado</small>
             </Form.Group>
-            <Form.Group>
+            <Form.Group className="mb-4">
               <Form.Label className="font-weight-normal">Requerimientos</Form.Label>
               <ProgressBar  now={avance.requerimientos} variant="success" />
-              <small>% completado</small>
+              <small>{avance.requerimientos}% completado</small>
             </Form.Group>
-            <Form.Group>
+            <Form.Group className="mb-4">
               <Form.Label className="font-weight-normal">Análisis y diseño</Form.Label>
               <ProgressBar now={avance.analisis}  variant="success" />
-              <small>% completado</small>
+              <small>{avance.analisis}% completado</small>
             </Form.Group>
-            <Form.Group>
+            <Form.Group className="mb-4">
               <Form.Label className="font-weight-normal">Construcción</Form.Label>
               <ProgressBar now={avance.construccion} variant="success" />
-              <small>% completado</small>
+              <small>{avance.construccion}% completado</small>
             </Form.Group>
-            <Form.Group>
+            <Form.Group className="mb-4">
               <Form.Label className="font-weight-normal">Integración y pruebas</Form.Label>
               <ProgressBar now={avance.integracion} variant="success" />
-              <small>% completado</small>
+              <small>{avance.integracion}% completado</small>
             </Form.Group>
-            <Form.Group>
+            <Form.Group className="mb-4">
               <Form.Label className="font-weight-normal">Cierre</Form.Label>
               <ProgressBar now={avance.cierre} variant="success" />
-              <small>% completado</small>
+              <small>{avance.cierre}% completado</small>
             </Form.Group>
             <Form.Group className="mb-4">
               <Row>

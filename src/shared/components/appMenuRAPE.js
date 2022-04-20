@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 
 export const AppMenuRAPE = () => {
   return (
@@ -11,7 +11,6 @@ export const AppMenuRAPE = () => {
         <div className="sidebar">
           <nav className="mt-2">
             <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-
               <li className="nav-item">
                 <Link to={"/"} className="nav-link">
                   <i className="nav-icon far fa-calendar-alt"></i>
@@ -29,10 +28,10 @@ export const AppMenuRAPE = () => {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to={"/changerol"} className="nav-link">
+                <Link to={"/config"} className="nav-link">
                   <i className="nav-icon far fa-calendar-alt"></i>
                   <p>
-                    Mis roles
+                    Configuración
                   </p>
                 </Link>
               </li>

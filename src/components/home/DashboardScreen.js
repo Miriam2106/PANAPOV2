@@ -38,6 +38,7 @@ export const DashboardScreen = () => {
       .then((response) => {
         let data = response.data;
         let projectTemp = data.filter(item => item.statusProject.description !== "Prospecto")
+        console.log(projectTemp)
         for (let i = 0; i < projectTemp.length; i++) {
           let dateEnd = new Date(projectTemp[i].dateEnd).getTime();
           let dateStart = new Date(projectTemp[i].dateStart).getTime();
@@ -53,10 +54,8 @@ export const DashboardScreen = () => {
             porDias: porcentaje
           }
           projectTemp[i] = dataTemp
-          console.log(projectTemp[i].porDias)
         }
 
-        setProjects(projectTemp);
         let activos = 0, pausados = 0, cerrados = 0, cancelados = 0;
         for (let i = 0; i < projectTemp.length; i++) {
           switch (projectTemp[i].statusProject.description) {
@@ -74,8 +73,27 @@ export const DashboardScreen = () => {
               break;
           }
         }
+
+        let temp = []
+        for (let m = 0; m < projectTemp.length; m++) {
+          if (projectTemp[m].priority === "Alta") {
+            temp.push(projectTemp[m])
+          }
+
+        }
+        for (let m = 0; m < projectTemp.length; m++) {
+          if (projectTemp[m].priority === "Media") {
+            temp.push(projectTemp[m])
+
+          }
+        }
+        for (let m = 0; m < projectTemp.length; m++) {
+          if (projectTemp[m].priority === "Baja") {
+            temp.push(projectTemp[m])
+          }
+        }
+        setProjects(temp);
         setContadores({ activos: activos, pausados: pausados, cerrados: cerrados, cancelados: cancelados })
-        console.log(contadores)
         setIsLoading(false);
       })
       .catch((error) => {
@@ -121,22 +139,20 @@ export const DashboardScreen = () => {
       cell: (row) =>
         <div className='text-center'>
           {
-
-
-            row.daysDeviation === null ? (
+            row.daysDeviation === null || row.daysDeviation === undefined ? (
               <h6>
                 <Badge bg="secondary">
                   <div>No hay reportes</div>
                 </Badge>
               </h6>
-            ) : (row.porDias >= 0 && row.porDias <=10 ?
+            ) : (row.porDias >= 0 && row.porDias <= 10 ?
               <h6>
                 <Badge bg="success">
                   <div>{row.daysDeviation}</div>
                 </Badge>
-              </h6> : (row.porDias >= 10 && row.porDias <= 15 ?
+              </h6> : (row.porDias > 10 && row.porDias <= 15 ?
                 <h6>
-                  <Badge bg="rgb(255, 193, 7)">
+                  <Badge bg="orange">
                     <div>{row.daysDeviation}</div>
                   </Badge>
                 </h6> :

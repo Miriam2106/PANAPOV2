@@ -1,83 +1,289 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
-import FeatherIcon from "feather-icons-react";
 import Alert, { msjConfirmacion, titleConfirmacion, titleError, msjError, msjExito, titleExito } from "../../../../shared/plugins/alert";
+import * as yup from "yup";
 import axios from "../../../../shared/plugins/axios";
+import { useFormik } from "formik";
 
 export const ProjectCreate = ({
     isOpenCreateReport,
     handleClose,
-    setProjectsRape,
-    status
+    getProjectsRape,
+    id
 }) => {
 
-    // const [values, setValues] = useState({ description: description });
+    const formik = useFormik({
+        initialValues: {
+            phasePlanned: "",
+            phaseReal: "",
+            stagePlanned: "",
+            stageReal: "",
+            percentage: "",
+            cost: "",
+            daysDeviation: "",
+        },
+        validationSchema: yup.object().shape({
+            phasePlanned: yup.string().required("Campo obligatorio"),
+            phaseReal: yup.string().required("Campo obligatorio"),
+            stagePlanned: yup.string().required("Campo obligatorio"),
+            stageReal: yup.string().required("Campo obligatorio"),
+            percentage: yup.number().required("Campo obligatorio"),
+            cost: yup.number().required("Campo obligatorio"),
+            daysDeviation: yup.number().required("Campo obligatorio"),
+        }),
+        onSubmit: (values) => {
+            let dateFormat = new Date(new Date());
+            let year = dateFormat.getFullYear();
+            let day = dateFormat.getDate();
+            if (day < 10) day = `0${day}`
+            let month = dateFormat.getMonth();
+            month = month + 1;
+            if (month < 10) month = `0${month}`
+            let finalDate = `${year}-${month}-${day}`
+            let report = {
+                ...values,
+                project: {
+                    id: id
+                },
+                date: finalDate
+            };
+            console.log(report);
+            Alert.fire({
+                title: titleConfirmacion,
+                text: msjConfirmacion,
+                confirmButtonText: "Aceptar",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#198754",
+                cancelButtonColor: "#dc3545",
+                showCancelButton: true,
+                reverseButtons: true,
+                showLoaderOnConfirm: true,
+                icon: "warning",
+                preConfirm: () => {
+                    axios({ url: "/report/", method: "POST", data: JSON.stringify(report) })
+                        .then((response) => {
+                            if (!response.error) {
+                                formikPhases.values.report = response.data.id
+                                formikPhases.handleSubmit();
+                                Alert.fire({
+                                    title: titleExito,
+                                    confirmButtonColor: "#198754",
+                                    icon: "success",
+                                    confirmButtonText: "Aceptar",
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        handleCloseForm();
+                                    }
+                                });
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            Alert.fire({
+                                title: titleError,
+                                text: msjError,
+                                cancelButtonColor: "#198754",
+                                icon: "error",
+                                confirmButtonText: "Aceptar",
+                            });
+                        });
+                },
+                backdrop: true,
+                allowOutsideClick: !Alert.isLoading,
+            });
+        },
+    });
 
-    // const handleChange = (event) =>{
-    //   const { name, value } = event.target;
-    //   setValues({ ...values, [name]: value});
-    // }  
-
-    // const handleSubmit = (event) =>{
-    //   event.preventDefault();
-    //   console.log(values);
-    //   Alert.fire({
-    //   title: titleConfirmacion,
-    //   text: msjConfirmacion,
-    //   confirmButtonText: "Aceptar",
-    //   cancelButtonText: "Cancelar",
-    //   showCancelButton: true,
-    //   reverseButtons: true,
-    //   showLoaderOnConfirm: true,
-    //   icon: "warning",
-    //   preConfirm: () => {
-    //     return axios({
-    //       url: "/category/",
-    //       method: "PUT",
-    //       data: JSON.stringify(values),
-    //     })
-    //       .then((response) => {
-    //         console.log(response);
-    //         if (!response.error) {
-    //           setCategories((categories) => [
-    //             ...categories.filter((it) => it.id !== values.id),
-    //             values,
-    //           ]);
-    //           handleCloseForm();
-    //           Alert.fire({
-    //             title: titleExito,
-    //             text: msjExito,
-    //             icon: "success",
-    //             confirmButtonText: "Aceptar",
-    //           });
-    //         }
-    //         return response;
-    //       })
-    //       .catch((error) => {
-    //         Alert.fire({
-    //           title: titleError,
-    //           confirmButtonColor: "#198754",
-    //           text: msjError,
-    //           icon: "error",
-    //           confirmButtonText: "Aceptar",
-    //         });
-    //       });
-    //   },
-    //   backdrop: true,
-    //   allowOutsideClick: !Alert.isLoading,
-    //   });
-    // };
+    const formikPhases = useFormik({
+        initialValues: {
+            cierre: "",
+            inicio: "",
+            requerimientos: "",
+            construccion: "",
+            analisis: "",
+            integracion: "",
+            report: ""
+        },
+        validationSchema: yup.object().shape({
+            report: yup.string().required("Campo obligatorio"),
+        }),
+        onSubmit: (values) => {
+            let fase = {
+                report: {
+                    id: values.report
+                },
+                phases: {
+                    id: 1
+                },
+                porcentaje: values.inicio
+            }
+            console.log(fase);
+            //1
+            axios({ url: "/reportphases/", method: "POST", data: JSON.stringify(fase) })
+                .then((response) => {
+                    if (!response.error) {
+                        console.log("inicio")
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    Alert.fire({
+                        title: titleError,
+                        text: msjError,
+                        cancelButtonColor: "#198754",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                });
+            //2
+            fase = {
+                report: {
+                    id: values.report
+                },
+                phases: {
+                    id: 2
+                },
+                porcentaje: values.requerimientos
+            }
+            axios({ url: "/reportphases/", method: "POST", data: JSON.stringify(fase) })
+                .then((response) => {
+                    if (!response.error) {
+                        console.log("req")
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    Alert.fire({
+                        title: titleError,
+                        text: msjError,
+                        cancelButtonColor: "#198754",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                });
+            //3
+            fase = {
+                report: {
+                    id: values.report
+                },
+                phases: {
+                    id: 3
+                },
+                porcentaje: values.analisis
+            }
+            axios({ url: "/reportphases/", method: "POST", data: JSON.stringify(fase) })
+                .then((response) => {
+                    if (!response.error) {
+                        console.log("analisis")
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    Alert.fire({
+                        title: titleError,
+                        text: msjError,
+                        cancelButtonColor: "#198754",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                });
+            //4
+            fase = {
+                report: {
+                    id: values.report
+                },
+                phases: {
+                    id: 4
+                },
+                porcentaje: values.construccion
+            }
+            axios({ url: "/reportphases/", method: "POST", data: JSON.stringify(fase) })
+                .then((response) => {
+                    if (!response.error) {
+                        console.log("construccion")
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    Alert.fire({
+                        title: titleError,
+                        text: msjError,
+                        cancelButtonColor: "#198754",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                });
+            //5
+            fase = {
+                report: {
+                    id: values.report
+                },
+                phases: {
+                    id: 5
+                },
+                porcentaje: values.integracion
+            }
+            axios({ url: "/reportphases/", method: "POST", data: JSON.stringify(fase) })
+                .then((response) => {
+                    if (!response.error) {
+                        console.log("integracion")
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    Alert.fire({
+                        title: titleError,
+                        text: msjError,
+                        cancelButtonColor: "#198754",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                });
+            //6
+            fase = {
+                report: {
+                    id: values.report
+                },
+                phases: {
+                    id: 6
+                },
+                porcentaje: values.cierre
+            }
+            axios({ url: "/reportphases/", method: "POST", data: JSON.stringify(fase) })
+                .then((response) => {
+                    if (!response.error) {
+                        console.log("cierre")
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    Alert.fire({
+                        title: titleError,
+                        text: msjError,
+                        cancelButtonColor: "#198754",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                });
+            Alert.fire({
+                title: titleExito,
+                text: msjExito,
+                confirmButtonColor: "#198754",
+                icon: "success",
+                confirmButtonText: "Aceptar",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    handleCloseForm();
+                }
+            });
+            getProjectsRape();
+        },
+    });
 
     const handleCloseForm = () => {
-        handleClose();
-        // setValues({});
+        formik.resetForm();
+        handleClose(false);
     };
-
-    // useEffect(() => {
-    //     setValues({
-    //         description: description
-    //     });
-    // }, [description]);
 
     return (
         <>
@@ -86,104 +292,123 @@ export const ProjectCreate = ({
                     <Modal.Title>Crear reporte</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form className="row">
-                        <Form.Group className="col-md-6" >
-                            <Form.Label>Fecha de creación de reporte</Form.Label>
-                            <Form.Control type="date" placeholder="Ejemplo: Díaz" />
+                    <Form className="row" onSubmit={formik.handleSubmit}>
+                        <Form.Group className="col-md-6 mb-4" >
+                            <Form.Label className="font-weight-normal">Etapa planeada</Form.Label>
+                            <Form.Select name="stagePlanned" value={formik.values.stagePlanned}
+                                onChange={formik.handleChange}>
+                                <option value="">Seleccione una opción</option>
+                                <option value="Planeación">Planeación</option>
+                                <option value="Realización">Realización</option>
+                                <option value="Control">Control</option>
+                                <option value="Cierre">Cierre</option>
+                            </Form.Select>
+                            {formik.errors.stagePlanned ? (
+                                <span className='text-danger'>{formik.errors.stagePlanned}</span>
+                            ) : null}
                         </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
-                            <Form.Label>Etapa planeada</Form.Label>
-                            <Form.Select>
-                                <option value="1">Seleccione una opción</option>
-                                <option value="2">Planeación</option>
-                                <option value="3">Realización</option>
-                                <option value="3">Control</option>
-                                <option value="3">Cierre</option>
+                            <Form.Label className="font-weight-normal">Etapa real</Form.Label>
+                            <Form.Select name="stageReal" value={formik.values.stageReal}
+                                onChange={formik.handleChange}>
+                                <option value="">Seleccione una opción</option>
+                                <option value="Planeación">Planeación</option>
+                                <option value="Realización">Realización</option>
+                                <option value="Control">Control</option>
+                                <option value="Cierre">Cierre</option>
                             </Form.Select>
+                            {formik.errors.stageReal ? (
+                                <span className='text-danger'>{formik.errors.stageReal}</span>
+                            ) : null}
                         </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
-                            <Form.Label>Etapa real</Form.Label>
-                            <Form.Select>
-                                <option value="1">Seleccione una opción</option>
-                                <option value="2">Planeación</option>
-                                <option value="3">Realización</option>
-                                <option value="3">Control</option>
-                                <option value="3">Cierre</option>
+                            <Form.Label className="font-weight-normal">Fase planeada</Form.Label>
+                            <Form.Select name="phasePlanned" value={formik.values.phasePlanned}
+                                onChange={formik.handleChange}>
+                                <option value="">Seleccione una opción</option>
+                                <option value="Inicio">Inicio</option>
+                                <option value="Requerimientos">Requerimientos</option>
+                                <option value="Análisis y diseño">Análisis y diseño</option>
+                                <option value="Construcción">Construcción</option>
+                                <option value="Integración y pruebas">Integración y pruebas</option>
+                                <option value="Cierre">Cierre</option>
                             </Form.Select>
+                            {formik.errors.phasePlanned ? (
+                                <span className='text-danger'>{formik.errors.phasePlanned}</span>
+                            ) : null}
                         </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
-                            <Form.Label>Fase planeada</Form.Label>
-                            <Form.Select>
-                                <option value="1">Seleccione una opción</option>
-                                <option value="2">Inicio</option>
-                                <option value="3">Requerimientos</option>
-                                <option value="3">Análisis y diseño</option>
-                                <option value="3">Construcción</option>
-                                <option value="3">Integración y pruebas</option>
-                                <option value="3">Cierre</option>
+                            <Form.Label className="font-weight-normal">Fase real</Form.Label>
+                            <Form.Select name="phaseReal" value={formik.values.phaseReal}
+                                onChange={formik.handleChange}>
+                                <option value="">Seleccione una opción</option>
+                                <option value="Inicio">Inicio</option>
+                                <option value="Requerimientos">Requerimientos</option>
+                                <option value="Análisis y diseño">Análisis y diseño</option>
+                                <option value="Construcción">Construcción</option>
+                                <option value="Integración y pruebas">Integración y pruebas</option>
+                                <option value="Cierre">Cierre</option>
                             </Form.Select>
+                            {formik.errors.phaseReal ? (
+                                <span className='text-danger'>{formik.errors.phaseReal}</span>
+                            ) : null}
                         </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
-                            <Form.Label>Fase real</Form.Label>
-                            <Form.Select>
-                                <option value="1">Seleccione una opción</option>
-                                <option value="2">Inicio</option>
-                                <option value="3">Requerimientos</option>
-                                <option value="3">Análisis y diseño</option>
-                                <option value="3">Construcción</option>
-                                <option value="3">Integración y pruebas</option>
-                                <option value="3">Cierre</option>
-                            </Form.Select>
+                            <Form.Label className="font-weight-normal">Costo total de inversión</Form.Label>
+                            <Form.Control type="number" placeholder="Ejemplo: 60000" name="cost" value={formik.values.cost}
+                                onChange={formik.handleChange} />
+                            {formik.errors.cost ? (
+                                <span className='text-danger'>{formik.errors.cost}</span>
+                            ) : null}
                         </Form.Group>
-                        
-                        <Form.Group className="col-md-6" >
-                            <Form.Label>Porcentaje de avance total (%)</Form.Label>
-                            <Form.Control type="number" placeholder="20" />
+                        <Form.Group className="col-md-6 mb-4" >
+                            <Form.Label className="font-weight-normal">Días de desviación</Form.Label>
+                            <Form.Control type="number" placeholder="Ejemplo: 10" name="daysDeviation" value={formik.values.daysDeviation}
+                                onChange={formik.handleChange} />
+                            {formik.errors.daysDeviation ? (
+                                <span className='text-danger'>{formik.errors.daysDeviation}</span>
+                            ) : null}
                         </Form.Group>
-                        <Form.Group className="col-md-12" >
-                            <div className="line"></div>
+                        <Form.Group className="col-md-6 mb-4" >
+                            <Form.Label className="font-weight-normal">Porcentaje de avance total (%)</Form.Label>
+                            <Form.Control type="number" placeholder="Ejemplo: 20" name="percentage" value={formik.values.percentage}
+                                onChange={formik.handleChange} />
+                            {formik.errors.percentage ? (
+                                <span className='text-danger'>{formik.errors.percentage}</span>
+                            ) : null}
                         </Form.Group>
-                        
-                        <Form.Group className="col-md-12 topBottom2">
+                        <Form.Group className="col-md-12 mb-4">
                             <h5>Porcentaje de avance por fase</h5>
                         </Form.Group>
-                        <Form.Group className="col-md-6" >
-                            <Form.Label>Inicio</Form.Label>
-                            <Form.Control type="number" placeholder="20" />
+                        <Form.Group className="col-md-6 mb-4" >
+                            <Form.Label className="font-weight-normal">Inicio</Form.Label>
+                            <Form.Control type="number" placeholder="Ejemplo: 20" name="inicio" value={formikPhases.values.inicio}
+                                onChange={formikPhases.handleChange} />
                         </Form.Group>
-                        <Form.Group className="col-md-6" >
-                            <Form.Label>Requerimientos</Form.Label>
-                            <Form.Control type="number" placeholder="20" />
+                        <Form.Group className="col-md-6 mb-4" >
+                            <Form.Label className="font-weight-normal">Requerimientos</Form.Label>
+                            <Form.Control type="number" placeholder="Ejemplo: 20" name="requerimientos" value={formikPhases.values.requerimientos}
+                                onChange={formikPhases.handleChange} />
                         </Form.Group>
-                        <Form.Group className="col-md-6" >
-                            <Form.Label>Análisis y diseño</Form.Label>
-                            <Form.Control type="number" placeholder="20" />
+                        <Form.Group className="col-md-6 mb-4" >
+                            <Form.Label className="font-weight-normal">Análisis y diseño</Form.Label>
+                            <Form.Control type="number" placeholder="Ejemplo: 20" name="analisis" value={formikPhases.values.analisis}
+                                onChange={formikPhases.handleChange} />
                         </Form.Group>
-                        <Form.Group className="col-md-6" >
-                            <Form.Label>Construcción</Form.Label>
-                            <Form.Control type="number" placeholder="20" />
+                        <Form.Group className="col-md-6 mb-4" >
+                            <Form.Label className="font-weight-normal">Construcción</Form.Label>
+                            <Form.Control type="number" placeholder="Ejemplo: 20" name="construccion" value={formikPhases.values.construccion}
+                                onChange={formikPhases.handleChange} />
                         </Form.Group>
-                        <Form.Group className="col-md-6" >
-                            <Form.Label>Integración y pruebas</Form.Label>
-                            <Form.Control type="number" placeholder="20" />
+                        <Form.Group className="col-md-6 mb-4" >
+                            <Form.Label className="font-weight-normal">Integración y pruebas</Form.Label>
+                            <Form.Control type="number" placeholder="Ejemplo: 20" name="integracion" value={formikPhases.values.integracion}
+                                onChange={formikPhases.handleChange} />
                         </Form.Group>
-                        <Form.Group className="col-md-6" >
-                            <Form.Label>Cierre</Form.Label>
-                            <Form.Control type="number" placeholder="20" />
-                        </Form.Group>
-                        <Form.Group className="col-md-12 topBottom" >
-                            <div className="line"></div>
-                        </Form.Group>
-                        <Form.Group className="col-md-12 topBottom2">
-                            <h5>Porcentaje de avance por fase</h5>
-                        </Form.Group>
-                        <Form.Group className="col-md-6" >
-                            <Form.Label>Costo total de inversión</Form.Label>
-                            <Form.Control type="number" placeholder="60000" />
-                        </Form.Group>
-                        <Form.Group className="col-md-6" >
-                            <Form.Label>Días de desviación</Form.Label>
-                            <Form.Control type="number" placeholder="10" />
+                        <Form.Group className="col-md-6 mb-4" >
+                            <Form.Label className="font-weight-normal">Cierre</Form.Label>
+                            <Form.Control type="number" placeholder="Ejemplo: 20" name="cierre" value={formikPhases.values.cierre}
+                                onChange={formikPhases.handleChange} />
                         </Form.Group>
                         <Form.Group className="mb-4 topBottom">
                             <Row>
@@ -195,9 +420,8 @@ export const ProjectCreate = ({
                                         style={{ background: "#042B61", borderColor: "#042B61" }}
                                         className="ms-3"
                                         type="submit"
-                                        disabled={false}
-                                    >
-                                        Guardar
+                                        disabled={!(formik.isValid && formik.dirty)}>
+                                        Confirmar
                                     </Button>
                                 </Col>
                             </Row>

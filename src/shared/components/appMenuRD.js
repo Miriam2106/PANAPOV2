@@ -29,10 +29,10 @@ export const AppMenuRD = () => {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to={"/changerol"} className="nav-link">
+                <Link to={"/config"} className="nav-link">
                   <i className="nav-icon far fa-calendar-alt"></i>
                   <p>
-                    Mis roles
+                  Configuración
                   </p>
                 </Link>
               </li>

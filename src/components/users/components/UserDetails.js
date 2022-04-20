@@ -1,44 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
-import FeatherIcon from "feather-icons-react";
-import Alert, {
-  msjConfirmacion,
-  titleConfirmacion,
-  titleError,
-  msjError,
-  msjExito,
-  titleExito,
-} from "../../../shared/plugins/alert";
-import axios from "../../../shared/plugins/axios";
 
 export const UserDetails = ({
   isOpenDetails,
   handleClose,
-  getPerson,
-  setUsers,
-  name,
-  surname,
-  lastname,
-  status,
+  person,
+  username,
+  authority,
 }) => {
-  const [values, setValues] = useState({ name: name, surname: surname, lastname: lastname });
+  const [values, setValues] = useState({
+    person: person,
+    username: username,
+    authority: authority,
+  });
 
   const handleCloseForm = () => {
-    handleClose();
+    handleClose(false);
     setValues({});
   };
 
   useEffect(() => {
     setValues({
-      name: name,
-      surname: surname,
-      lastname: lastname,
+      person: person,
+      username: username,
+      authority: authority,
     });
-  }, [name, surname, lastname]);
+  }, [isOpenDetails]);
 
   return (
     <>
-      <Modal show={isOpenDetails} onHide={handleCloseForm}>
+      <Modal show={isOpenDetails} onHide={handleCloseForm} size="lg">
         <Modal.Header
           closeButton
           className="backgroundHeadModal"
@@ -48,48 +39,43 @@ export const UserDetails = ({
         </Modal.Header>
         <Modal.Body>
           <Form className="row">
-            <Form.Group className="col-md-6">
-              <Form.Label className="form-label">Nombre</Form.Label>
+            <Form.Group className="col-md-6 mb-4">
+              <Form.Label className="font-weight-normal">Nombre<span className="text-danger">*</span></Form.Label>
               <Form.Control
                 name="name"
-                placeholder="Nombre del proyecto"
                 value={values.person?.name}
                 readOnly
               />
             </Form.Group>
-            <Form.Group className="col-md-6">
-              <Form.Label className="form-label">Primer apellido</Form.Label>
+            <Form.Group className="col-md-6 mb-4">
+              <Form.Label className="font-weight-normal">Primer apellido<span className="text-danger">*</span></Form.Label>
               <Form.Control
                 name="name"
-                placeholder=""
-                value={values.surname   }
+                value={values.person?.surname}
+                readOnly
+              />
+            </Form.Group>
+            <Form.Group className="col-md-6 mb-4">
+              <Form.Label className="font-weight-normal">Segundo apellido<span className="text-danger">*</span></Form.Label>
+              <Form.Control
+                name="name"
+                value={values.person?.secondSurname}
+                readOnly
+              />
+            </Form.Group>
+            <Form.Group className="col-md-6 mb-4">
+              <Form.Label className="font-weight-normal">Correo<span className="text-danger">*</span></Form.Label>
+              <Form.Control
+                name="name"
+                value={values.username}
                 readOnly
               />
             </Form.Group>
             <Form.Group className="col-md-6 topBottom2">
-              <Form.Label className="form-label">Segundo apellido</Form.Label>
+              <Form.Label className="font-weight-normal">Rol<span className="text-danger">*</span></Form.Label>
               <Form.Control
                 name="name"
-                placeholder=""
-                value={values.lastname}
-                readOnly
-              />
-            </Form.Group>
-            <Form.Group className="col-md-6 topBottom2">
-              <Form.Label className="form-label">Correo</Form.Label>
-              <Form.Control
-                name="name"
-                placeholder=""
-                // value={values.name}
-                readOnly
-              />
-            </Form.Group>
-            <Form.Group className="col-md-6 topBottom2">
-              <Form.Label className="form-label">Rol</Form.Label>
-              <Form.Control
-                name="name"
-                placeholder="Coordinador"
-                // value={values.name}
+                value={values.authority}
                 readOnly
               />
             </Form.Group>

@@ -6,9 +6,11 @@ import { CustomLoader } from "../../../../shared/components/CustomLoader";
 import { AlertData } from "../../../../shared/components/alertData"
 import { FilterComponent } from "../../../../shared/components/FilterComponent";
 import Alert, { msjConfirmacion, titleConfirmacion, titleError, msjError, msjExito, titleExito } from "../../../../shared/plugins/alert";
-import {useNavigate } from 'react-router-dom';
-import { ProjectDetails } from "../../coordinador/components/ProjectDetails"; 
+import { useNavigate } from 'react-router-dom';
+import { ProjectDetails } from "../../coordinador/components/ProjectDetails";
 import axios from "../../../../shared/plugins/axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faFile, faInfo} from '@fortawesome/free-solid-svg-icons'
 
 export const ProjectListRd = () => {
     const [filterText, setFilterText] = useState("");
@@ -39,21 +41,38 @@ export const ProjectListRd = () => {
         getProjectsRd();
     }, []);
 
-    const getProjectsRd = async() => {
+    const getProjectsRd = async () => {
         await axios({ url: "/project/", method: "GET" })
             .then((response) => {
                 let data = response.data;
                 console.log(data);
-                let projectTemp = []
+                let arrTemp = []
                 for (let r = 0; r < data.length; r++) {
                     for (let m = 0; m < data[r].team.length; m++) {
                         let temp = data[r];
-                        console.log(data[r].team[m].rolProject.description+" "+data[r].team[m].person.email)
+                        console.log(data[r].team[m].rolProject.description + " " + data[r].team[m].person.email)
                         if (data[r].team[m].rolProject.description === "RD" && data[r].team[m].person.email === username) {
-                            projectTemp.push(temp)
+                            arrTemp.push(temp)
                         }
                     }
-                    //console.log(data[i].team[m])
+                }
+                let projectTemp = []
+                for (let m = 0; m < arrTemp.length; m++) {
+                    if (arrTemp[m].priority === "Alta") {
+                        projectTemp.push(arrTemp[m])
+                    }
+
+                }
+                for (let m = 0; m < arrTemp.length; m++) {
+                    if (arrTemp[m].priority === "Media") {
+                        projectTemp.push(arrTemp[m])
+
+                    }
+                }
+                for (let m = 0; m < arrTemp.length; m++) {
+                    if (arrTemp[m].priority === "Baja") {
+                        projectTemp.push(arrTemp[m])
+                    }
                 }
                 setProjectsRd(projectTemp);
                 console.log(projectTemp);
@@ -150,7 +169,7 @@ export const ProjectListRd = () => {
                         setValues(row)
                         setIsOpenDetails(true)
                     }}>
-                    <FeatherIcon icon="info" />
+                    <FontAwesomeIcon className="btnS" icon={faInfo} size="lg" />
                 </Button>
             </div>
         },
@@ -162,7 +181,7 @@ export const ProjectListRd = () => {
                     handleReport()
                 }}
                 >
-                    <FeatherIcon icon="file" />
+                    <FontAwesomeIcon icon={faFile} size="lg" className="btnS" />
                 </Button>
             </div>,
             center: true,

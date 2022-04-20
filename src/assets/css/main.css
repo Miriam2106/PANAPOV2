@@ -527,3 +527,8 @@ textarea.input100 {
   width: 25px;
   height: 25px;
 }
+
+.orange{
+  background-color: "#FFC107";
+  color: white
+}

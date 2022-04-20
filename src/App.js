@@ -127,6 +127,15 @@ const App = () => {
       },
       setRoleActive: (rol) => {
         dispatch({ type: 'ROL_ACTIVE', rol: rol });
+        if (rol === "COORDINADOR") {
+          localStorage.setItem("rolActive", "COORDINADOR")
+        } else if (rol === "DIRECTIVO") {
+          localStorage.setItem("rolActive", "DIRECTIVO")
+        } if (rol === "RD") {
+          localStorage.setItem("rolActive", "RD")
+        } if (rol === "RAPE") {
+          localStorage.setItem("rolActive", "RAPE")
+        }
       }
 
     }),
@@ -140,21 +149,21 @@ const App = () => {
     let rolActivo = localStorage.getItem("rolActive");
 
     let token = localStorage.getItem("token");
-  
-    if(coordinador==="true"){
+
+    if (coordinador === "true") {
       dispatch({ type: 'COORDINADOR', enable: true });
     }
-    if(rd==="true"){
+    if (rd === "true") {
       dispatch({ type: 'RD', enable: true });
     }
-    if(rape==="true"){
+    if (rape === "true") {
       dispatch({ type: 'RAPE', enable: true });
     }
-    if(directivo==="true"){
+    if (directivo === "true") {
       dispatch({ type: 'DIRECTIVO', enable: true });
     }
-    
-    dispatch({ type: 'ROL_ACTIVE', rol:rolActivo });
+
+    dispatch({ type: 'ROL_ACTIVE', rol: rolActivo });
     dispatch({ type: 'RESTORE_TOKEN', token: token });
   }, []);
 

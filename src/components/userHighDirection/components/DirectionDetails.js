@@ -54,7 +54,7 @@ export const DirectionDetails = ({
         <Modal.Body>
           <Form className="row">
             <Form.Group className="col-md-4 mb-4">
-              <Form.Label className="form-label">Nombre</Form.Label>
+              <Form.Label className="font-weight-normal">Nombre<span className="text-danger">*</span></Form.Label>
               <Form.Control
                 name="name"
                 value={values.name}
@@ -63,7 +63,7 @@ export const DirectionDetails = ({
               />
             </Form.Group>
             <Form.Group className="col-md-4 mb-4">
-              <Form.Label className="form-label">Primer apellido</Form.Label>
+              <Form.Label className="font-weight-normal">Primer apellido<span className="text-danger">*</span></Form.Label>
               <Form.Control
                 name="surname"
                 value={values.surname}
@@ -72,7 +72,7 @@ export const DirectionDetails = ({
               />
             </Form.Group>
             <Form.Group className="col-md-4 mb-4">
-              <Form.Label className="form-label">Segundo apellido</Form.Label>
+              <Form.Label className="font-weight-normal">Segundo apellido<span className="text-danger">*</span></Form.Label>
               <Form.Control
                 name="secondSurname"
                 value={values.secondSurname}
@@ -81,7 +81,7 @@ export const DirectionDetails = ({
               />
             </Form.Group>
             <Form.Group className="col-md-6 mb-4">
-              <Form.Label className="form-label">Correo</Form.Label>
+              <Form.Label className="font-weight-normal">Correo<span className="text-danger">*</span></Form.Label>
               <Form.Control
                 name="username"
                 value={values.username}

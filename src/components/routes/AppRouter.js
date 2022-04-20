@@ -49,7 +49,7 @@ export const AppRouter = () => {
                           <Route path={"/client"} element={<ClientScreen/>} />
                           <Route path={"/role"} element={<RoleScreen/>} />
                           <Route path={"/report"} element={<ReportScreen/>} />
-                          <Route path={"/changerol"} element={<ChangeRol/>} />
+                          <Route path={"/config"} element={<ChangeRol/>} />
                           <Route path="*" element={<div>ERROR 404</div>} />
                         </Routes>
                       </Container>
@@ -67,7 +67,7 @@ export const AppRouter = () => {
                         <Route path={"/"} element={<DashboardScreen />} />
                         <Route path={"/project"} element={<ProjectScreenRd />} />
                         <Route path={"/report"} element={<ReportScreen />} />
-                        <Route path={"/changerol"} element={<ChangeRol />} />
+                        <Route path={"/config"} element={<ChangeRol />} />
                         <Route path="*" element={<div>ERROR 404</div>} />
                       </Routes>
                     </Container>
@@ -85,7 +85,7 @@ export const AppRouter = () => {
                         <Route path={"/"} element={<DashboardScreen />} />
                         <Route path={"/project"} element={<ProjectScreenRape />} />
                         <Route path={"/report"} element={<ReportScreen />} />
-                        <Route path={"/changerol"} element={<ChangeRol />} />
+                        <Route path={"/config"} element={<ChangeRol />} />
                         <Route path="*" element={<div>ERROR 404</div>} />
                       </Routes>
                     </Container>
