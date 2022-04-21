@@ -54,7 +54,7 @@ export const DirectionList = () => {
             });
     };
 
-    const onDelete = (idDelete) =>{
+    const onDelete = (idDelete) => {
         Alert.fire({
             title: titleConfirmacion,
             confirmButtonText: "Eliminar",
@@ -66,7 +66,7 @@ export const DirectionList = () => {
             showLoaderOnConfirm: true,
             icon: "warning",
             preConfirm: () => {
-                return axios({ url: "/user/"+idDelete, method: "DELETE"})
+                return axios({ url: "/user/" + idDelete, method: "DELETE" })
                     .then((response) => {
                         if (!response.error) {
                             getDirectives();
@@ -140,48 +140,32 @@ export const DirectionList = () => {
                 }
             };
             console.log(person)
-            Alert.fire({
-                title: titleConfirmacion,
-                text: msjConfirmacion,
-                confirmButtonText: "Aceptar",
-                cancelButtonText: "Cancelar",
-                confirmButtonColor: "#198754",
-                cancelButtonColor: "#dc3545",
-                showCancelButton: true,
-                reverseButtons: true,
-                showLoaderOnConfirm: true,
-                icon: "warning",
-                preConfirm: () => {
-                    return axios({ url: "/user/", method: "POST", data: JSON.stringify(person) })
-                        .then((response) => {
-                            if (!response.error) {
-                                getDirectives();
-                                Alert.fire({
-                                    title: "Directivo registrado correctamente",
-                                    confirmButtonColor: "#198754",
-                                    icon: "success",
-                                    confirmButtonText: "Aceptar",
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        handleCloseForm();
-                                    }
-                                });
+            return axios({ url: "/user/", method: "POST", data: JSON.stringify(person) })
+                .then((response) => {
+                    if (!response.error) {
+                        getDirectives();
+                        Alert.fire({
+                            title: "Directivo registrado correctamente",
+                            confirmButtonColor: "#198754",
+                            icon: "success",
+                            confirmButtonText: "Aceptar",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                handleCloseForm();
                             }
-                            return response;
-                        }).catch((error) => {
-                            console.log(error)
-                            Alert.fire({
-                                title: titleError,
-                                text: msjError,
-                                cancelButtonColor: "#198754",
-                                icon: "error",
-                                confirmButtonText: "Aceptar"
-                            });
                         });
-                },
-                backdrop: true,
-                allowOutsideClick: !Alert.isLoading
-            });
+                    }
+                    return response;
+                }).catch((error) => {
+                    console.log(error)
+                    Alert.fire({
+                        title: titleError,
+                        text: msjError,
+                        cancelButtonColor: "#198754",
+                        icon: "error",
+                        confirmButtonText: "Aceptar"
+                    });
+                });
         },
     });
 
@@ -222,7 +206,7 @@ export const DirectionList = () => {
                             });
                             setIsOpenDetails(true);
                         }}>
-                        <FontAwesomeIcon className="btnS" icon={faInfo} size="lg"/>
+                        <FontAwesomeIcon className="btnS" icon={faInfo} size="lg" />
                     </Button>
                 </div>
             ),
@@ -246,7 +230,7 @@ export const DirectionList = () => {
                             setIsOpenUpdate(true)
                         }}
                     >
-                        <FontAwesomeIcon  icon={faEdit} size="lg" />
+                        <FontAwesomeIcon icon={faEdit} size="lg" />
                     </Button>
                 </div>
             ),
@@ -262,7 +246,7 @@ export const DirectionList = () => {
                             onDelete(row.id);
                         }}
                     >
-                        <FontAwesomeIcon  icon={faTrash} size="lg" />
+                        <FontAwesomeIcon icon={faTrash} size="lg" />
                     </Button>
                 </div>
             ),

@@ -95,51 +95,33 @@ export const ClientList = () => {
                 },
             };
             console.log(cliente);
-            Alert.fire({
-                title: titleConfirmacion,
-                text: msjConfirmacion,
-                confirmButtonText: "Aceptar",
-                cancelButtonText: "Cancelar",
-                confirmButtonColor: "#198754",
-                cancelButtonColor: "#dc3545",
-                showCancelButton: true,
-                reverseButtons: true,
-                showLoaderOnConfirm: true,
-                icon: "warning",
-                preConfirm: () => {
-                    return axios({ url: "/client/", method: "POST", data: JSON.stringify(cliente) })
-                        .then((response) => {
-                            console.log(response);
-                            if (!response.error) {
-                                getClients();
-                                Alert.fire({
-                                    title: titleExito,
-                                    text: msjExito,
-                                    confirmButtonColor: "#198754",
-                                    icon: "success",
-                                    confirmButtonText: "Aceptar",
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        handleCloseForm();
-                                    }
-                                });
+            return axios({ url: "/client/", method: "POST", data: JSON.stringify(cliente) })
+                .then((response) => {
+                    if (!response.error) {
+                        getClients();
+                        Alert.fire({
+                            title: "Cliente registrado correctamente",
+                            confirmButtonColor: "#198754",
+                            icon: "success",
+                            confirmButtonText: "Aceptar",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                handleCloseForm();
                             }
-                            return response;
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                            Alert.fire({
-                                title: titleError,
-                                text: msjError,
-                                cancelButtonColor: "#198754",
-                                icon: "error",
-                                confirmButtonText: "Aceptar",
-                            });
                         });
-                },
-                backdrop: true,
-                allowOutsideClick: !Alert.isLoading,
-            });
+                    }
+                    return response;
+                })
+                .catch((error) => {
+                    console.log(error);
+                    Alert.fire({
+                        title: titleError,
+                        text: msjError,
+                        cancelButtonColor: "#198754",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                });
         },
     });
 
@@ -174,7 +156,7 @@ export const ClientList = () => {
                         })
                         setIsOpenDetails(true)
                     }}>
-                   <FontAwesomeIcon className="btnS" icon={faInfo} size="lg"/>
+                    <FontAwesomeIcon className="btnS" icon={faInfo} size="lg" />
                 </Button>
             </div>
         },
@@ -311,7 +293,7 @@ export const ClientList = () => {
                                                                     </Form.Group>
                                                                     <Form.Group className="col-md-2 mb-4" >
                                                                         <Form.Label className="font-weight-normal">Extensión<span className="text-danger">*</span></Form.Label>
-                                                                        <Form.Control name="extension" value={formik.values.extension} onChange={formik.handleChange} type="tel" placeholder="Ejemplo: 416"/>
+                                                                        <Form.Control name="extension" value={formik.values.extension} onChange={formik.handleChange} type="tel" placeholder="Ejemplo: 416" />
                                                                         {formik.errors.extension ? (
                                                                             <span className="text-danger">{formik.errors.extension}</span>
                                                                         ) : null}
@@ -409,8 +391,8 @@ export const ClientList = () => {
                                                     </Collapse>
                                                 </Card>
                                                 <div className="d-grid gap-2">
-                                                    <Button type="submit" style={{ background: "#042B61", borderColor: "#042B61" }} 
-                                                    disabled={!(formik.isValid && formik.dirty)} >
+                                                    <Button type="submit" style={{ background: "#042B61", borderColor: "#042B61" }}
+                                                        disabled={!(formik.isValid && formik.dirty)} >
                                                         Registrar
                                                     </Button>
                                                 </div>

@@ -5,7 +5,7 @@ export const AppMenuRAPE = () => {
   return (
     <div>
       <aside className="main-sidebar sidebar-dark-primary elevation-4">
-        <a className="brand-link" style={{"text-decoration": "none"}}>
+        <a className="brand-link" style={{textDecoration: "none"}}>
           <span className="brand-text font-weight-light">PANAPO | RAPE</span>
         </a>
         <div className="sidebar">
@@ -13,7 +13,7 @@ export const AppMenuRAPE = () => {
             <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
               <li className="nav-item">
                 <Link to={"/dashboard"} className="nav-link">
-                  <i className="nav-icon far fa-calendar-alt"></i>
+                  <i className="nav-icon far fa-image"></i>
                   <p>
                     Panel de proyectos
                   </p>
@@ -29,7 +29,7 @@ export const AppMenuRAPE = () => {
               </li>
               <li className="nav-item">
                 <Link to={"/"} className="nav-link">
-                  <i className="nav-icon far fa-calendar-alt"></i>
+                  <i className="nav-icon far fa-image"></i>
                   <p>
                     Configuración
                   </p>

@@ -57,13 +57,13 @@ export const ProjectEditProspect = ({
       priceClient: "",
     },
     validationSchema: yup.object().shape({
-      cotizacion: yup.number().required("Campo obligatorio"),
+      cotizacion: yup.number().required("Campo obligatorio").min(1, "El valor tiene que ser mayor a cero"),
       description: yup.string().required("Campo obligatorio"),
-      months: yup.number().required("Campo obligatorio"),
+      months: yup.number().required("Campo obligatorio").min(1, "El valor tiene que ser mayor a cero"),
       name: yup.string().required("Campo obligatorio"),
-      numberBeca: yup.number().required("Campo obligatorio"),
+      numberBeca: yup.number().required("Campo obligatorio").min(1, "El valor tiene que ser mayor a cero").max(10, "El valor máximo de becarios es de 10"),
       client: yup.string().required("Campo obligatorio"),
-      priceClient: yup.number().required("Campo obligatorio"),
+      priceClient: yup.number().required("Campo obligatorio").min(1, "El valor tiene que ser mayor a cero"),
     }),
     onSubmit: (valuesFormik) => {
       let prospect = {
@@ -98,14 +98,11 @@ export const ProjectEditProspect = ({
         data: JSON.stringify(prospect),
       })
         .then((response) => {
-          console.log(response);
-          console.log("Si")
           if (!response.error) {
             getProspectProject();
             getProyectos();
             Alert.fire({
-              title: titleExito,
-              text: msjExito,
+              title: "Proyecto modificado correctamente",
               icon: "success",
               confirmButtonText: "Aceptar",
             }).then((result) => {
@@ -117,8 +114,6 @@ export const ProjectEditProspect = ({
           return response;
         })
         .catch((error) => {
-          console.log(error)
-          console.log("No")
           Alert.fire({
             title: titleError,
             confirmButtonColor: "#198754",

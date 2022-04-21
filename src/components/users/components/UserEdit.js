@@ -44,49 +44,34 @@ export const UserEdit = ({
                 id: id,
                 
             };
-            console.log(pass);
-            Alert.fire({
-                title: titleConfirmacion,
-                text: msjConfirmacion,
-                confirmButtonText: "Aceptar",
-                cancelButtonText: "Cancelar",
-                showCancelButton: true,
-                reverseButtons: true,
-                showLoaderOnConfirm: true,
-                icon: "warning",
-                preConfirm: () => {
-                    return axios({
-                        url: "/user/update",
-                        method: "PUT",
-                        data: JSON.stringify(pass),
-                    })
-                        .then((response) => {
-                            console.log(response);
-                            if (!response.error) {
-                                handleCloseForm();
-                                // getPersonal();
-                                Alert.fire({
-                                    title: "Se ha cambiado la contraseña exitosamente",
-                                    text: msjExito,
-                                    icon: "success",
-                                    confirmButtonText: "Aceptar",
-                                });
-                            }
-                            return response;
-                        })
-                        .catch((error) => {
-                            Alert.fire({
-                                title: titleError,
-                                confirmButtonColor: "#198754",
-                                text: msjError,
-                                icon: "error",
-                                confirmButtonText: "Aceptar",
-                            });
+            //console.log(pass);
+            return axios({
+                url: "/user/update",
+                method: "PUT",
+                data: JSON.stringify(pass),
+            })
+                .then((response) => {
+                    console.log(response);
+                    if (!response.error) {
+                        handleCloseForm();
+                        // getPersonal();
+                        Alert.fire({
+                            title: "Se ha cambiado la contraseña exitosamente",
+                            icon: "success",
+                            confirmButtonText: "Aceptar",
                         });
-                },
-                backdrop: true,
-                allowOutsideClick: !Alert.isLoading,
-            });
+                    }
+                    return response;
+                })
+                .catch((error) => {
+                    Alert.fire({
+                        title: titleError,
+                        confirmButtonColor: "#198754",
+                        text: msjError,
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                });
         },
     });
 

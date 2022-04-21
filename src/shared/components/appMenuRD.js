@@ -5,7 +5,7 @@ export const AppMenuRD = () => {
   return (
     <div>
       <aside className="main-sidebar sidebar-dark-primary elevation-4">
-        <a className="brand-link" style={{"text-decoration": "none"}}>
+        <a className="brand-link" style={{textDecoration: "none"}}>
           <span className="brand-text font-weight-light">PANAPO | RD</span>
         </a>
         <div className="sidebar">
@@ -14,7 +14,7 @@ export const AppMenuRD = () => {
 
               <li className="nav-item">
                 <Link to={"/dashboard"} className="nav-link">
-                  <i className="nav-icon far fa-calendar-alt"></i>
+                  <i className="nav-icon far fa-image"></i>
                   <p>
                     Panel de proyectos
                   </p>
@@ -30,7 +30,7 @@ export const AppMenuRD = () => {
               </li>
               <li className="nav-item">
                 <Link to={"/"} className="nav-link">
-                  <i className="nav-icon far fa-calendar-alt"></i>
+                  <i className="nav-icon far fa-image"></i>
                   <p>
                   Configuración
                   </p>

@@ -18,7 +18,7 @@ export const ForgotPassword = () => {
 
     useEffect(() => {
         document.title = "PANAPO | ¿Olvidaste tu contraseña?";
-      }, []);
+    }, []);
 
     const formik = useFormik({
         initialValues: {
@@ -29,49 +29,33 @@ export const ForgotPassword = () => {
         }),
         onSubmit: (values) => {
             console.log(values);
-            Alert.fire({
-                title: titleConfirmacion,
-                text: msjConfirmacion,
-                confirmButtonText: "Aceptar",
-                cancelButtonText: "Cancelar",
-                confirmButtonColor: "#198754",
-                cancelButtonColor: "#dc3545",
-                showCancelButton: true,
-                reverseButtons: true,
-                showLoaderOnConfirm: true,
-                icon: "warning",
-                preConfirm: () => {
-                    return axios({ url: "/user/password/", method: "POST", data: JSON.stringify(values) })
-                        .then((response) => {
-                            if (!response.error) {                               
-                                Alert.fire({
-                                    title: titleExito,
-                                    text: "Se ha enviado el código a su correo electrónico",
-                                    confirmButtonColor: "#198754",
-                                    icon: "success",
-                                    confirmButtonText: "Aceptar",
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        handleCloseForm();
-                                    }
-                                    navigation("/recover");
-                                });
+            return axios({ url: "/user/password/", method: "POST", data: JSON.stringify(values) })
+                .then((response) => {
+                    if (!response.error) {
+                        Alert.fire({
+                            title: titleExito,
+                            text: "Se ha enviado el código a su correo electrónico",
+                            confirmButtonColor: "#198754",
+                            icon: "success",
+                            confirmButtonText: "Aceptar",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                handleCloseForm();
                             }
-                            return response;
-                        }).catch((error) => {
-                            console.log(error)
-                            Alert.fire({
-                                title: titleError,
-                                text: msjError,
-                                cancelButtonColor: "#198754",
-                                icon: "error",
-                                confirmButtonText: "Aceptar"
-                            });
+                            navigation("/recover");
                         });
-                },
-                backdrop: true,
-                allowOutsideClick: !Alert.isLoading
-            });
+                    }
+                    return response;
+                }).catch((error) => {
+                    console.log(error)
+                    Alert.fire({
+                        title: titleError,
+                        text: msjError,
+                        cancelButtonColor: "#198754",
+                        icon: "error",
+                        confirmButtonText: "Aceptar"
+                    });
+                });
         },
     });
 
@@ -114,10 +98,10 @@ export const ForgotPassword = () => {
                                     </FormGroup>
                                     <Form.Group className="form-outline mb-4">
                                         <div className="d-grid gap-2 text-center pt-1 pb-1">
-                                            
-                                            <Button  style={{ background: "#042B61",borderColor: "#042B61", }} type="submit" disabled={!(formik.isValid && formik.dirty)} >
+
+                                            <Button style={{ background: "#042B61", borderColor: "#042B61", }} type="submit" disabled={!(formik.isValid && formik.dirty)} >
                                                 Confirmar
-                                                
+
                                             </Button>
 
                                         </div>

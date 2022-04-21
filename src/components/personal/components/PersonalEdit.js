@@ -67,49 +67,33 @@ export const PersonalEdit = ({
                     id: status
                 }
             };
-            console.log(person);
-            Alert.fire({
-                title: titleConfirmacion,
-                text: msjConfirmacion,
-                confirmButtonText: "Aceptar",
-                cancelButtonText: "Cancelar",
-                showCancelButton: true,
-                reverseButtons: true,
-                showLoaderOnConfirm: true,
-                icon: "warning",
-                preConfirm: () => {
-                    return axios({
-                        url: "/person/",
-                        method: "PUT",
-                        data: JSON.stringify(person),
-                    })
-                        .then((response) => {
-                            console.log(response);
-                            if (!response.error) {
-                                handleCloseForm();
-                                getPersonal();
-                                Alert.fire({
-                                    title: titleExito,
-                                    text: msjExito,
-                                    icon: "success",
-                                    confirmButtonText: "Aceptar",
-                                });
-                            }
-                            return response;
-                        })
-                        .catch((error) => {
-                            Alert.fire({
-                                title: titleError,
-                                confirmButtonColor: "#198754",
-                                text: msjError,
-                                icon: "error",
-                                confirmButtonText: "Aceptar",
-                            });
+            return axios({
+                url: "/person/",
+                method: "PUT",
+                data: JSON.stringify(person),
+            })
+                .then((response) => {
+                    console.log(response);
+                    if (!response.error) {
+                        handleCloseForm();
+                        getPersonal();
+                        Alert.fire({
+                            title: "Personal modificado correctamente",
+                            icon: "success",
+                            confirmButtonText: "Aceptar",
                         });
-                },
-                backdrop: true,
-                allowOutsideClick: !Alert.isLoading,
-            });
+                    }
+                    return response;
+                })
+                .catch((error) => {
+                    Alert.fire({
+                        title: titleError,
+                        confirmButtonColor: "#198754",
+                        text: msjError,
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                });
         },
     });
 

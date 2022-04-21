@@ -6,6 +6,7 @@ import axios from "../../../shared/plugins/axios";
 
 export const ReportDetails = ({
   isOpen,
+  id,
   handleClose,
   data,
   phasePlanned,
@@ -49,46 +50,47 @@ export const ReportDetails = ({
           analisis: "",
           integracion: ""
         }
-        console.log(response2)
         for (let m = 0; m < response2.data.length; m++) {
-          if (response2.data[m].report.project.id === data) {
-            if (response2.data[m].phases.id === 1) {
-              temp = {
-                ...temp,
-                inicio: response2.data[m].porcentaje
+          if (id === response2.data[m].report.id) {
+            if (response2.data[m].report.project.id === data) {
+              if (response2.data[m].phases.id === 1) {
+                temp = {
+                  ...temp,
+                  inicio: response2.data[m].porcentaje
+                }
               }
-            }
-            if (response2.data[m].phases.id === 2) {
-              temp = {
-                ...temp,
-                requerimientos: response2.data[m].porcentaje
-              }
+              if (response2.data[m].phases.id === 2) {
+                temp = {
+                  ...temp,
+                  requerimientos: response2.data[m].porcentaje
+                }
 
-            }
-            if (response2.data[m].phases.id === 3) {
-              temp = {
-                ...temp,
-                analisis: response2.data[m].porcentaje
               }
+              if (response2.data[m].phases.id === 3) {
+                temp = {
+                  ...temp,
+                  analisis: response2.data[m].porcentaje
+                }
 
-            }
-            if (response2.data[m].phases.id === 4) {
-              temp = {
-                ...temp,
-                construccion: response2.data[m].porcentaje
               }
+              if (response2.data[m].phases.id === 4) {
+                temp = {
+                  ...temp,
+                  construccion: response2.data[m].porcentaje
+                }
 
-            }
-            if (response2.data[m].phases.id === 5) {
-              temp = {
-                ...temp,
-                integracion: response2.data[m].porcentaje
               }
-            }
-            if (response2.data[m].phases.id === 6) {
-              temp = {
-                ...temp,
-                cierre: response2.data[m].porcentaje
+              if (response2.data[m].phases.id === 5) {
+                temp = {
+                  ...temp,
+                  integracion: response2.data[m].porcentaje
+                }
+              }
+              if (response2.data[m].phases.id === 6) {
+                temp = {
+                  ...temp,
+                  cierre: response2.data[m].porcentaje
+                }
               }
             }
           }
@@ -110,7 +112,7 @@ export const ReportDetails = ({
 
   return (
     <>
-      <Modal show={isOpen} onHide={handleCloseForm} size="lg">
+      <Modal show={isOpen} onHide={handleCloseForm} size="md">
         <Modal.Header closeButton className="backgroundHeadModal" closeVariant="white">
           <Modal.Title>Detalles del reporte</Modal.Title>
         </Modal.Header>
@@ -121,27 +123,31 @@ export const ReportDetails = ({
             </Form.Group>
             <Form.Group className="col-md-6 mb-4" >
               <Form.Label className="font-weight-normal">Etapa planeada (APE)<span className="text-danger">*</span></Form.Label>
-              <Form.Control value={values.stagePlanned}
+              <Form.Control value={values.stagePlanned} readOnly
                 onChange={handleChange} />
             </Form.Group>
             <Form.Group className="col-md-6 mb-4" >
               <Form.Label className="font-weight-normal">Etapa real (APE)<span className="text-danger">*</span></Form.Label>
-              <Form.Control value={values.stageReal}
+              <Form.Control value={values.stageReal} readOnly
                 onChange={handleChange} />
             </Form.Group>
             <Form.Group className="col-md-6 mb-4" >
               <Form.Label className="font-weight-normal">Fase planeada (DMS)<span className="text-danger">*</span></Form.Label>
-              <Form.Control value={values.phasePlanned}
+              <Form.Control value={values.phasePlanned} readOnly
                 onChange={handleChange} />
             </Form.Group>
             <Form.Group className="col-md-6 mb-4" >
               <Form.Label className="font-weight-normal">Fase real (DMS)<span className="text-danger">*</span></Form.Label>
-              <Form.Control value={values.phaseReal}
+              <Form.Control value={values.phaseReal} readOnly
                 onChange={handleChange} />
             </Form.Group>
-            <Form.Group className="col-md-12 mb-1">
-              <h5>Porcentaje de avance por fase</h5>
-            </Form.Group>
+            {
+              avance.inicio > 0 || avance.requerimientos > 0 || avance.analisis > 0 || avance.construccion > 0 || avance.integracion > 0 || avance.cierre > 0 ?
+                <Form.Group className="col-md-12 mb-1">
+                  <h5>Porcentaje de avance por fase</h5>
+                </Form.Group>
+                : null
+            }
             {
               avance.inicio > 0 ?
                 <Form.Group className="mb-4">
@@ -194,7 +200,7 @@ export const ReportDetails = ({
                   <ProgressBar now={avance.cierre} variant="success" />
                   <small>{avance.cierre}% completado</small>
                 </Form.Group>
-              : null
+                : null
             }
             <Form.Group className="mb-4">
               <Row>

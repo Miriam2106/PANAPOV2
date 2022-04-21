@@ -84,106 +84,89 @@ export const DirectionEdit = ({
           id: status
         }
       };
-      Alert.fire({
-        title: titleConfirmacion,
-        text: msjConfirmacion,
-        confirmButtonText: "Aceptar",
-        cancelButtonText: "Cancelar",
-        confirmButtonColor: "#198754",
-        cancelButtonColor: "#dc3545",
-        showCancelButton: true,
-        reverseButtons: true,
-        showLoaderOnConfirm: true,
-        icon: "warning",
-        preConfirm: () => {
-          //si hay valores en las contraseñas
-          if (valuesFormik.password !== "" && valuesFormik.confirmPassword !== "") {
-            //si manda contraseñas y son iguales
-            if (valuesFormik.password === valuesFormik.confirmPassword) {
-              let data = {
-                ...dataPerson,
-                password: valuesFormik.password,
-              }
-              console.log(data)
-              //modificar usuario
-              return axios({ url: "/user/update", method: "PUT", data: JSON.stringify(data) })
-                .then((response) => {
-                  if (!response.error) {
-                    //modificar persona
-                    return axios({ url: "/person/", method: "PUT", data: JSON.stringify(dataPerson.person) })
-                      .then((response) => {
-                        if (!response.error) {
-                          getDirectives();
-                          Alert.fire({
-                            title: titleExito,
-                            text: msjExito,
-                            confirmButtonColor: "#198754",
-                            icon: "success",
-                            confirmButtonText: "Aceptar",
-                          }).then((result) => {
-                            if (result.isConfirmed) {
-                              handleCloseForm();
-                            }
-                          });
-                        }
-                        return response;
-                      }).catch((error) => {
-                        console.log(error)
-                        Alert.fire({
-                          title: titleError,
-                          text: msjError,
-                          cancelButtonColor: "#198754",
-                          icon: "error",
-                          confirmButtonText: "Aceptar"
-                        });
-                      });
-                  }
-                  return response;
-                }).catch((error) => {
-                  console.log(error)
-                  Alert.fire({
-                    title: titleError,
-                    text: msjError,
-                    cancelButtonColor: "#198754",
-                    icon: "error",
-                    confirmButtonText: "Aceptar"
-                  });
-                });
-            }
-          } else {
-            //no manda contraseña
-            return axios({ url: "/person/", method: "PUT", data: JSON.stringify(dataPerson.person) })
-              .then((response) => {
-                console.log(response)
-                if (!response.error) {
-                  getDirectives();
-                  Alert.fire({
-                    title: "Directivo modificado correctamente",
-                    confirmButtonColor: "#198754",
-                    icon: "success",
-                    confirmButtonText: "Aceptar",
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      handleCloseForm();
-                    }
-                  });
-                }
-                return response;
-              }).catch((error) => {
-                console.log(error)
-                Alert.fire({
-                  title: titleError,
-                  text: msjError,
-                  cancelButtonColor: "#198754",
-                  icon: "error",
-                  confirmButtonText: "Aceptar"
-                });
-              });
+      if (valuesFormik.password !== "" && valuesFormik.confirmPassword !== "") {
+        //si manda contraseñas y son iguales
+        if (valuesFormik.password === valuesFormik.confirmPassword) {
+          let data = {
+            ...dataPerson,
+            password: valuesFormik.password,
           }
-        },
-        backdrop: true,
-        allowOutsideClick: !Alert.isLoading
-      });
+          console.log(data)
+          //modificar usuario
+          return axios({ url: "/user/update", method: "PUT", data: JSON.stringify(data) })
+            .then((response) => {
+              if (!response.error) {
+                //modificar persona
+                return axios({ url: "/person/", method: "PUT", data: JSON.stringify(dataPerson.person) })
+                  .then((response) => {
+                    if (!response.error) {
+                      getDirectives();
+                      Alert.fire({
+                        title: titleExito,
+                        text: msjExito,
+                        confirmButtonColor: "#198754",
+                        icon: "success",
+                        confirmButtonText: "Aceptar",
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          handleCloseForm();
+                        }
+                      });
+                    }
+                    return response;
+                  }).catch((error) => {
+                    console.log(error)
+                    Alert.fire({
+                      title: titleError,
+                      text: msjError,
+                      cancelButtonColor: "#198754",
+                      icon: "error",
+                      confirmButtonText: "Aceptar"
+                    });
+                  });
+              }
+              return response;
+            }).catch((error) => {
+              console.log(error)
+              Alert.fire({
+                title: titleError,
+                text: msjError,
+                cancelButtonColor: "#198754",
+                icon: "error",
+                confirmButtonText: "Aceptar"
+              });
+            });
+        }
+      } else {
+        //no manda contraseña
+        return axios({ url: "/person/", method: "PUT", data: JSON.stringify(dataPerson.person) })
+          .then((response) => {
+            console.log(response)
+            if (!response.error) {
+              getDirectives();
+              Alert.fire({
+                title: "Directivo modificado correctamente",
+                confirmButtonColor: "#198754",
+                icon: "success",
+                confirmButtonText: "Aceptar",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  handleCloseForm();
+                }
+              });
+            }
+            return response;
+          }).catch((error) => {
+            console.log(error)
+            Alert.fire({
+              title: titleError,
+              text: msjError,
+              cancelButtonColor: "#198754",
+              icon: "error",
+              confirmButtonText: "Aceptar"
+            });
+          });
+      }
     },
   });
 

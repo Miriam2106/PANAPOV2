@@ -77,48 +77,32 @@ export const ClientEdit = ({
                 },
             };
             console.log(cliente);
-            Alert.fire({
-                title: titleConfirmacion,
-                text: msjConfirmacion,
-                confirmButtonText: "Aceptar",
-                cancelButtonText: "Cancelar",
-                showCancelButton: true,
-                reverseButtons: true,
-                showLoaderOnConfirm: true,
-                icon: "warning",
-                preConfirm: () => {
-                    return axios({
-                        url: "/client/",
-                        method: "PUT",
-                        data: JSON.stringify(cliente),
-                    })
-                        .then((response) => {
-                            console.log(response);
-                            if (!response.error) {
-                                handleCloseForm();
-                                getClients();
-                                Alert.fire({
-                                    title: titleExito,
-                                    text: msjExito,
-                                    icon: "success",
-                                    confirmButtonText: "Aceptar",
-                                });
-                            }
-                            return response;
-                        })
-                        .catch((error) => {
-                            Alert.fire({
-                                title: titleError,
-                                confirmButtonColor: "#198754",
-                                text: msjError,
-                                icon: "error",
-                                confirmButtonText: "Aceptar",
-                            });
+            return axios({
+                url: "/client/",
+                method: "PUT",
+                data: JSON.stringify(cliente),
+            })
+                .then((response) => {
+                    if (!response.error) {
+                        handleCloseForm();
+                        getClients();
+                        Alert.fire({
+                            title: "Cliente modificado correctamente",
+                            icon: "success",
+                            confirmButtonText: "Aceptar",
                         });
-                },
-                backdrop: true,
-                allowOutsideClick: !Alert.isLoading,
-            });
+                    }
+                    return response;
+                })
+                .catch((error) => {
+                    Alert.fire({
+                        title: titleError,
+                        confirmButtonColor: "#198754",
+                        text: msjError,
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                });
         },
     });
 

@@ -49,7 +49,7 @@ export const UserList = () => {
         axios({ url: "/person/", method: "GET" })
             .then((response) => {
                 let data = response.data;
-                let tempData = data.filter(item => item.profession.description !== "Directivo")
+                let tempData = data.filter(item => item.profession.description !== "Directivo" && item.profession.description !== "Becario" )
                 setPerson1(tempData);
                 setIsLoading(false);
             })
@@ -147,7 +147,7 @@ export const UserList = () => {
             ),
         },
         {
-            name: <div><h6>Desactivar</h6></div>,
+            name: <div><h6>Cambiar estado</h6></div>,
             cell: (row) => <div>
                 {row.status.description === "Activo" ? (
                     <Button variant="danger" size="md"
@@ -183,17 +183,17 @@ export const UserList = () => {
                 let personalUpdate = {};
                 if (users.status.description === 'Activo') {
                     personalUpdate = {
-                        ...users,
+                        id: users.id,
                         status: { id: 2 }
                     };
                 } else {
                     personalUpdate = {
-                        ...users,
+                        id: users.id,
                         status: { id: 1 }
                     };
                 }
                 return axios({
-                    url: "/user/",
+                    url: "/user/estado/",
                     method: 'PUT',
                     data: JSON.stringify(personalUpdate)
                 })
@@ -201,8 +201,7 @@ export const UserList = () => {
                         if (!response.error) {
                             getUser();
                             Alert.fire({
-                                title: titleExito,
-                                text: msjExito,
+                                title: "Estado modificado correctamente",
                                 icon: "success",
                                 confirmButtonText: "Aceptar",
                                 confirmButtonColor: "#198754",
@@ -259,137 +258,120 @@ export const UserList = () => {
                 .required("Campo obligatorio"),
         }),
         onSubmit: (values) => {
-            console.log(values.authorities)
-            Alert.fire({
-                title: titleConfirmacion,
-                text: msjConfirmacion,
-                confirmButtonText: "Aceptar",
-                cancelButtonText: "Cancelar",
-                confirmButtonColor: "#198754",
-                cancelButtonColor: "#dc3545",
-                showCancelButton: true,
-                reverseButtons: true,
-                showLoaderOnConfirm: true,
-                icon: "warning",
-                preConfirm: () => {
-                    axios({ url: "/user/", method: "GET" })
-                        .then((response) => {
-                            let exist = false;
-                            let id;
-                            let auth = [];
-                            let error = false;
-                            let data = []
-                            for (let i = 0; i < response.data.length; i++) {
-                                if (response.data[i].person.id === parseInt(values.username)) {
-                                    for (let m = 0; m < response.data[i].authorities.length; m++) {
-                                        if (response.data[i].authorities[m].id === parseInt(values.authorities)) {
-                                            error = true;
-                                        } else {
-                                            exist = true;
-                                            auth = response.data[i].authorities;
-                                            id = response.data[i].person.id;
-                                            data = response.data[i]
-                                        }
-                                    }
+            //console.log(values.authorities)
+            axios({ url: "/user/", method: "GET" })
+                .then((response) => {
+                    let exist = false;
+                    let id;
+                    let auth = [];
+                    let error = false;
+                    let data = []
+                    for (let i = 0; i < response.data.length; i++) {
+                        if (response.data[i].person.id === parseInt(values.username)) {
+                            for (let m = 0; m < response.data[i].authorities.length; m++) {
+                                if (response.data[i].authorities[m].id === parseInt(values.authorities)) {
+                                    error = true;
+                                } else {
+                                    exist = true;
+                                    auth = response.data[i].authorities;
+                                    id = response.data[i].person.id;
+                                    data = response.data[i]
                                 }
                             }
-                            if (error) {
-                                Alert.fire({
-                                    title: "La persona ya tiene este rol",
-                                    text: msjError,
-                                    cancelButtonColor: "#198754",
-                                    icon: "error",
-                                    confirmButtonText: "Aceptar"
-                                });
-                                getUser();
-                                getPerson();
-                                getRol();
-                            } else if (exist) {
-                            
-                                auth.push({
-                                    id: parseInt(values.authorities),
-                                })
-                                data = {
-                                    ...data,
-                                    authorities: auth
-                                }
-                                console.log(data)
-                                axios({ url: "/user/rol/", method: "PUT", data: JSON.stringify(data) })
-                                    .then((response) => {
-                                        console.log(response)
-                                        if (!response.error) {
-                                            getUser();
-                                            getPerson();
-                                            getRol();
-                                            Alert.fire({
-                                                title: titleExito,
-                                                confirmButtonColor: "#198754",
-                                                icon: "success",
-                                                confirmButtonText: "Aceptar",
-                                            }).then((result) => {
-                                                if (result.isConfirmed) {
-                                                    handleCloseForm();
-                                                }
-                                            });
-                                        }
-                                    }).catch((error) => {
-                                        console.log(error)
-                                    });
-                            } else {
-                                axios({ url: "/person/" + values.username, method: "GET" })
-                                    .then((response) => {
-                                        console.log(response)
-                                        if (!response.error) {
-                                            let insert = {
-                                                authorities: [
-                                                    ...auth,
-                                                    {
-                                                    id: values.authorities,
-                                                    }
-                                                ],
-                                                username: response.data.email
-                                            }
-                                            axios({ url: "/user/save/", method: "POST", data: JSON.stringify(insert) })
-                                                .then((response) => {
-                                                    console.log(response)
-                                                    if (!response.error) {
-                                                        getUser();
-                                                        getPerson();
-                                                        getRol();
-                                                        Alert.fire({
-                                                            title: titleExito,
-                                                            confirmButtonColor: "#198754",
-                                                            icon: "success",
-                                                            confirmButtonText: "Aceptar",
-                                                        }).then((result) => {
-                                                            if (result.isConfirmed) {
-                                                                handleCloseForm();
-                                                            }
-                                                        });
-                                                    }
-                                                }).catch((error) => {
-                                                    console.log(error)
-                                                    Alert.fire({
-                                                        title: titleError,
-                                                        text: msjError,
-                                                        cancelButtonColor: "#198754",
-                                                        icon: "error",
-                                                        confirmButtonText: "Aceptar"
-                                                    });
-                                                });
-                                        }
-                                    }).catch((error) => {
-                                        console.log(error)
-                                    });
-                            }
-                        })
-                        .catch((error) => {
-
+                        }
+                    }
+                    if (error) {
+                        Alert.fire({
+                            title: "La persona ya tiene este rol",
+                            cancelButtonColor: "#198754",
+                            icon: "error",
+                            confirmButtonText: "Aceptar"
                         });
-                },
-                backdrop: true,
-                allowOutsideClick: !Alert.isLoading
-            });
+                        getUser();
+                        getPerson();
+                        getRol();
+                    } else if (exist) {
+
+                        auth.push({
+                            id: parseInt(values.authorities),
+                        })
+                        data = {
+                            ...data,
+                            authorities: auth
+                        }
+                        console.log(data)
+                        axios({ url: "/user/rol/", method: "PUT", data: JSON.stringify(data) })
+                            .then((response) => {
+                                console.log(response)
+                                if (!response.error) {
+                                    getUser();
+                                    getPerson();
+                                    getRol();
+                                    Alert.fire({
+                                        title: "Rol asignado correctamente",
+                                        confirmButtonColor: "#198754",
+                                        icon: "success",
+                                        confirmButtonText: "Aceptar",
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            handleCloseForm();
+                                        }
+                                    });
+                                }
+                            }).catch((error) => {
+                                console.log(error)
+                            });
+                    } else {
+                        axios({ url: "/person/" + values.username, method: "GET" })
+                            .then((response) => {
+                                console.log(response)
+                                if (!response.error) {
+                                    let insert = {
+                                        authorities: [
+                                            ...auth,
+                                            {
+                                                id: values.authorities,
+                                            }
+                                        ],
+                                        username: response.data.email
+                                    }
+                                    axios({ url: "/user/save/", method: "POST", data: JSON.stringify(insert) })
+                                        .then((response) => {
+                                            console.log(response)
+                                            if (!response.error) {
+                                                getUser();
+                                                getPerson();
+                                                getRol();
+                                                Alert.fire({
+                                                    title: "Rol asignado correctamente",
+                                                    confirmButtonColor: "#198754",
+                                                    icon: "success",
+                                                    confirmButtonText: "Aceptar",
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        handleCloseForm();
+                                                    }
+                                                });
+                                            }
+                                        }).catch((error) => {
+                                            console.log(error)
+                                            Alert.fire({
+                                                title: titleError,
+                                                text: msjError,
+                                                cancelButtonColor: "#198754",
+                                                icon: "error",
+                                                confirmButtonText: "Aceptar"
+                                            });
+                                        });
+                                }
+                            }).catch((error) => {
+                                console.log(error)
+                            });
+                    }
+                })
+                .catch((error) => {
+
+                });
         },
     });
 

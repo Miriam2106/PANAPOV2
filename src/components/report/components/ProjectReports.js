@@ -13,7 +13,6 @@ import { faBars } from '@fortawesome/free-solid-svg-icons'
 export const ProjectReports = ({
   data, name, dateEnd, dateStart
 }) => {
-  const navigation = useNavigate();
 
   const [values, setValues] = useState({ data: data, name: name, dateEnd: dateEnd, dateStart: dateStart });
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +41,6 @@ export const ProjectReports = ({
           let diferencia = end - start;
           let final = diferencia / (1000 * 60 * 60 * 24)
           let porcentaje = (final * reportTemp[i].daysDeviation) / 100;
-
           if (porcentaje < 0) {
             porcentaje = porcentaje * -1;
           }
@@ -52,8 +50,11 @@ export const ProjectReports = ({
           }
           reportTemp[i] = dataTemp
         }
-        setReports(reportTemp);
-        console.log(reportTemp);
+        let report = [];
+        for(let i = reportTemp.length-1; i >= 0; i--){
+          report.push(reportTemp[i])
+        }
+        setReports(report);
         setIsLoading(false);
       })
       .catch((error) => {

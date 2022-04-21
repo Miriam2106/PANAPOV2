@@ -41,7 +41,6 @@ export const PersonalList = () => {
             .then((response) => {
                 //filtrar que no aparezcan los directivos
                 let data = response.data;
-                console.log(data);
                 let personalTemp = data.filter(item => item.profession.description != "Directivo")
                 setPersonal(personalTemp);
                 setIsLoading(false);
@@ -78,49 +77,32 @@ export const PersonalList = () => {
                     id: parseInt(values.profession)
                 },
             };
-            Alert.fire({
-                title: titleConfirmacion,
-                text: msjConfirmacion,
-                confirmButtonText: "Aceptar",
-                cancelButtonText: "Cancelar",
-                confirmButtonColor: "#198754",
-                cancelButtonColor: "#dc3545",
-                showCancelButton: true,
-                reverseButtons: true,
-                showLoaderOnConfirm: true,
-                icon: "warning",
-                preConfirm: () => {
-                    return axios({ url: "/person/", method: "POST", data: JSON.stringify(person) })
-                        .then((response) => {
-                            if (!response.error) {
-                                getPersonal();
-                                Alert.fire({
-                                    title: titleExito,
-                                    text: msjExito,
-                                    confirmButtonColor: "#198754",
-                                    icon: "success",
-                                    confirmButtonText: "Aceptar",
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        handleCloseForm();
-                                    }
-                                });
+            return axios({ url: "/person/", method: "POST", data: JSON.stringify(person) })
+                .then((response) => {
+                    if (!response.error) {
+                        getPersonal();
+                        Alert.fire({
+                            title: "Personal registrado correctamente",
+                            confirmButtonColor: "#198754",
+                            icon: "success",
+                            confirmButtonText: "Aceptar",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                handleCloseForm();
                             }
-                            return response;
-                        }).catch((error) => {
-                            console.log(error)
-                            Alert.fire({
-                                title: titleError,
-                                text: msjError,
-                                cancelButtonColor: "#198754",
-                                icon: "error",
-                                confirmButtonText: "Aceptar"
-                            });
                         });
-                },
-                backdrop: true,
-                allowOutsideClick: !Alert.isLoading
-            });
+                    }
+                    return response;
+                }).catch((error) => {
+                    console.log(error)
+                    Alert.fire({
+                        title: titleError,
+                        text: msjError,
+                        cancelButtonColor: "#198754",
+                        icon: "error",
+                        confirmButtonText: "Aceptar"
+                    });
+                });
         },
     });
 
@@ -137,61 +119,61 @@ export const PersonalList = () => {
 
     const statusChange = (personal) => {
         Alert.fire({
-          title: titleConfirmacion,
-          confirmButtonText: "Aceptar",
-          cancelButtonText: "Cancelar",
-          confirmButtonColor: "#dc3545",
-          cancelButtonColor: "grey",
-          showCancelButton: true,
-          reverseButtons: true,
-          showLoaderOnConfirm: true,
-          icon: "warning",
-          backdrop: true,
-          allowOutsideClick: !Alert.isLoading,
-          preConfirm: () => {
-            let personalUpdate = {};
-            if (personal.status.description === 'Activo') {
-                personalUpdate = {
-                ...personal,
-                status: { id: 2, description: "Inactivo" }
-              };
-            } else {
-                personalUpdate = {
-                ...personal,
-                status: { id: 1, description: "Activo" }
-              };
-            }
-            return axios({
-              url: "/person/",
-              method: 'PUT',
-              data: JSON.stringify(personalUpdate)
-            })
-              .then((response => {
-                if (!response.error) { 
-                  getPersonal();
-                  Alert.fire({
-                    title: "",
-                    icon: "success",
-                    confirmButtonText: "Aceptar",
-                    confirmButtonColor: "#198754",
-                  });
+            title: titleConfirmacion,
+            confirmButtonText: "Aceptar",
+            cancelButtonText: "Cancelar",
+            confirmButtonColor: "#dc3545",
+            cancelButtonColor: "grey",
+            showCancelButton: true,
+            reverseButtons: true,
+            showLoaderOnConfirm: true,
+            icon: "warning",
+            backdrop: true,
+            allowOutsideClick: !Alert.isLoading,
+            preConfirm: () => {
+                let personalUpdate = {};
+                if (personal.status.description === 'Activo') {
+                    personalUpdate = {
+                        ...personal,
+                        status: { id: 2, description: "Inactivo" }
+                    };
                 } else {
-                  Alert.fire({
-                    title: titleError,
-                    text: msjError,
-                    icon: "error",
-                    confirmButtonText: "Aceptar",
-                    confirmButtonColor: "#198754",
-                  });
+                    personalUpdate = {
+                        ...personal,
+                        status: { id: 1, description: "Activo" }
+                    };
                 }
-                return response;
-              }))
-              .catch((error) => {
-                console.log(error);
-              })
-          }
+                return axios({
+                    url: "/person/",
+                    method: 'PUT',
+                    data: JSON.stringify(personalUpdate)
+                })
+                    .then((response => {
+                        if (!response.error) {
+                            getPersonal();
+                            Alert.fire({
+                                title: "Estado modificado correctamente",
+                                icon: "success",
+                                confirmButtonText: "Aceptar",
+                                confirmButtonColor: "#198754",
+                            });
+                        } else {
+                            Alert.fire({
+                                title: titleError,
+                                text: msjError,
+                                icon: "error",
+                                confirmButtonText: "Aceptar",
+                                confirmButtonColor: "#198754",
+                            });
+                        }
+                        return response;
+                    }))
+                    .catch((error) => {
+                        console.log(error);
+                    })
+            }
         });
-      }
+    }
 
     const columns = [
         {
@@ -226,7 +208,7 @@ export const PersonalList = () => {
                         })
                         setIsOpenDetails(true)
                     }}>
-                    <FontAwesomeIcon className="btnS" icon={faInfo} size="lg"/>
+                    <FontAwesomeIcon className="btnS" icon={faInfo} size="lg" />
                 </Button>
             </div>
         },
@@ -241,7 +223,7 @@ export const PersonalList = () => {
                         })
                         setIsOpenUpdate(true)
                     }}>
-                    <FontAwesomeIcon  icon={faEdit} size="lg" />
+                    <FontAwesomeIcon icon={faEdit} size="lg" />
                 </Button>
             </div>
         },
@@ -303,9 +285,9 @@ export const PersonalList = () => {
                                     <Col className="text-end">
                                         <Col>
                                             {isOpen ? (
-                                                <FeatherIcon icon="minus"/>
+                                                <FeatherIcon icon="minus" />
                                             ) : (
-                                                <FeatherIcon icon="plus"/>
+                                                <FeatherIcon icon="plus" />
                                             )}
                                         </Col>
                                     </Col>
@@ -317,7 +299,7 @@ export const PersonalList = () => {
                                         <Form className="row" onSubmit={formik.handleSubmit}>
                                             <Form.Group className="col-md-4" >
                                                 <Form.Label className="font-weight-normal">Nombre<span className="text-danger">*</span></Form.Label>
-                                                <Form.Control type="text" name="name" value={formik.values.name}
+                                                <Form.Control type="text" placeholder="Ejemplo: Thayli" name="name" value={formik.values.name}
                                                     onChange={formik.handleChange} />
                                                 {formik.errors.name ? (
                                                     <span className='text-danger'>{formik.errors.name}</span>
@@ -325,7 +307,7 @@ export const PersonalList = () => {
                                             </Form.Group>
                                             <Form.Group className="col-md-4" >
                                                 <Form.Label className="font-weight-normal">Primer apellido<span className="text-danger">*</span></Form.Label>
-                                                <Form.Control type="text" name="surname" value={formik.values.surname}
+                                                <Form.Control type="text" placeholder="Ejemplo: Villegas" name="surname" value={formik.values.surname}
                                                     onChange={formik.handleChange} />
                                                 {formik.errors.surname ? (
                                                     <span className='text-danger'>{formik.errors.surname}</span>
@@ -333,7 +315,7 @@ export const PersonalList = () => {
                                             </Form.Group>
                                             <Form.Group className="col-md-4" >
                                                 <Form.Label className="font-weight-normal">Segundo apellido<span className="text-danger">*</span></Form.Label>
-                                                <Form.Control type="text" name="secondSurname" value={formik.values.secondSurname}
+                                                <Form.Control type="text" placeholder="Ejemplo: García" name="secondSurname" value={formik.values.secondSurname}
                                                     onChange={formik.handleChange} />
                                                 {formik.errors.secondSurname ? (
                                                     <span className='text-danger'>{formik.errors.secondSurname}</span>
@@ -349,7 +331,7 @@ export const PersonalList = () => {
                                             </Form.Group>
                                             <Form.Group className="col-md-6 mb-4" >
                                                 <Form.Label className="font-weight-normal">Correo eléctronico<span className="text-danger">*</span></Form.Label>
-                                                <Form.Control type="email" name="email" value={formik.values.email}
+                                                <Form.Control type="email" placeholder="Ejemplo: utez@utez.edu.mx" name="email" value={formik.values.email}
                                                     onChange={formik.handleChange} />
                                                 {formik.errors.email ? (
                                                     <span className='text-danger'>{formik.errors.email}</span>
@@ -357,7 +339,7 @@ export const PersonalList = () => {
                                             </Form.Group>
                                             <Form.Group className="col-md-6 mb-4" >
                                                 <Form.Label className="font-weight-normal">Teléfono<span className="text-danger">*</span></Form.Label>
-                                                <Form.Control type="tel" name="phone" value={formik.values.phone}
+                                                <Form.Control type="tel" name="phone" placeholder="Ejemplo: 7771888263" value={formik.values.phone}
                                                     onChange={formik.handleChange} />
                                                 {formik.errors.phone ? (
                                                     <span className='text-danger'>{formik.errors.phone}</span>

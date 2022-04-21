@@ -13,7 +13,7 @@ export const AppMenu = () => {
             <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
               <li className="nav-item">
                 <Link to={"/dashboard"} className="nav-link">
-                  <i className="nav-icon far fa-calendar-alt"></i>
+                  <i className="nav-icon far fa-image"></i>
                   <p>
                     Panel de proyectos
                   </p>
@@ -29,7 +29,7 @@ export const AppMenu = () => {
               </li>
               <li className="nav-item">
                 <Link to={"/personal"} className="nav-link">
-                  <i className="nav-icon far fa-calendar-alt"></i>
+                  <i className="nav-icon far fa-image"></i>
                   <p>
                     Gestión de personal
                   </p>
@@ -37,14 +37,14 @@ export const AppMenu = () => {
               </li>
               <li className="nav-item">
                 <Link to={"/user"} className="nav-link">
-                  <i className="nav-icon far fa-calendar-alt"></i>
+                  <i className="nav-icon far fa-image"></i>
                   <p>
                     Gestión de usuarios
                   </p>
                 </Link>
               </li><li className="nav-item">
                 <Link to={"/direction"} className="nav-link">
-                  <i className="nav-icon far fa-calendar-alt"></i>
+                  <i className="nav-icon far fa-image"></i>
                   <p>
                     Gestión de usuarios de alta dirección
                   </p>
@@ -52,7 +52,7 @@ export const AppMenu = () => {
               </li>
               <li className="nav-item">
                 <Link to={"/client"} className="nav-link">
-                  <i className="nav-icon far fa-calendar-alt"></i>
+                  <i className="nav-icon far fa-image"></i>
                   <p>
                     Gestión de clientes
                   </p>
@@ -68,7 +68,7 @@ export const AppMenu = () => {
               </li>
               <li className="nav-item">
                 <Link to={"/"} className="nav-link">
-                  <i className="nav-icon far fa-calendar-alt"></i>
+                  <i className="nav-icon far fa-image"></i>
                   <p>
                     Configuración
                   </p>

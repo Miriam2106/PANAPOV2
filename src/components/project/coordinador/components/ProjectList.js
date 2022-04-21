@@ -400,8 +400,7 @@ export const ProjectList = () => {
                         getProspectProject();
                         getSelectProjects();
                         Alert.fire({
-                            title: titleExito,
-                            text: msjExito,
+                            title: "Proyecto registrado correctamente",
                             confirmButtonColor: "#198754",
                             icon: "success",
                             confirmButtonText: "Aceptar",

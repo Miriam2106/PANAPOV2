@@ -42,49 +42,33 @@ export const RecoverPassword = () => {
                     confirmButtonColor: "#3085D6",
                 });
             } else {
-                Alert.fire({
-                    title: titleConfirmacion,
-                    text: msjConfirmacion,
-                    confirmButtonText: "Aceptar",
-                    cancelButtonText: "Cancelar",
-                    confirmButtonColor: "#198754",
-                    cancelButtonColor: "#dc3545",
-                    showCancelButton: true,
-                    reverseButtons: true,
-                    showLoaderOnConfirm: true,
-                    icon: "warning",
-                    preConfirm: () => {
-                        return axios({ url: "/user/confir/", method: "POST", data: JSON.stringify(values) })
-                            .then((response) => {
-                                if (!response.error) {
-                                    Alert.fire({
-                                        title: "Cambio de contraseña exitoso",
-                                        text: "Se ha cambiado la contraseña correctamente ahora puede iniciar sesión",
-                                        confirmButtonColor: "#198754",
-                                        icon: "success",
-                                        confirmButtonText: "Aceptar",
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            handleCloseForm();
-                                        }
-                                        navigation("/");
-                                    });
+                return axios({ url: "/user/confir/", method: "POST", data: JSON.stringify(values) })
+                    .then((response) => {
+                        if (!response.error) {
+                            Alert.fire({
+                                title: "Cambio de contraseña exitoso",
+                                text: "Se ha cambiado la contraseña correctamente ahora puede iniciar sesión",
+                                confirmButtonColor: "#198754",
+                                icon: "success",
+                                confirmButtonText: "Aceptar",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    handleCloseForm();
                                 }
-                                return response;
-                            }).catch((error) => {
-                                console.log(error)
-                                Alert.fire({
-                                    title: titleError,
-                                    text: msjError,
-                                    cancelButtonColor: "#198754",
-                                    icon: "error",
-                                    confirmButtonText: "Aceptar"
-                                });
+                                navigation("/");
                             });
-                    },
-                    backdrop: true,
-                    allowOutsideClick: !Alert.isLoading
-                });
+                        }
+                        return response;
+                    }).catch((error) => {
+                        console.log(error)
+                        Alert.fire({
+                            title: titleError,
+                            text: msjError,
+                            cancelButtonColor: "#198754",
+                            icon: "error",
+                            confirmButtonText: "Aceptar"
+                        });
+                    });
             }
 
         },
@@ -164,7 +148,7 @@ export const RecoverPassword = () => {
                                     <Form.Group className='form-outline mb-4'>
                                         <div className='d-grid gap-2 text-center pt-1 pb-1'>
                                             <Button
-                                                style={{ background: "#042B61",borderColor: "#042B61", }}
+                                                style={{ background: "#042B61", borderColor: "#042B61", }}
                                                 type="submit" disabled={!(formik.isValid && formik.dirty)}
                                             >
                                                 Cambiar Contraseña

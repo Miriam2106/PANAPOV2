@@ -52,49 +52,34 @@ export const RoleEdit = ({
         ...valuesFormik,
         id: id,
       };
-      console.log(rol);
-      Alert.fire({
-        title: titleConfirmacion,
-        text: msjConfirmacion,
-        confirmButtonText: "Aceptar",
-        cancelButtonText: "Cancelar",
-        showCancelButton: true,
-        reverseButtons: true,
-        showLoaderOnConfirm: true,
-        icon: "warning",
-        preConfirm: () => {
-          return axios({
-            url: "/rol/",
-            method: "PUT",
-            data: JSON.stringify(rol),
-          })
-            .then((response) => {
-              console.log(response);
-              if (!response.error) {
-                handleCloseForm();
-                getRoles();
-                Alert.fire({
-                  title: titleExito,
-                  text: msjExito,
-                  icon: "success",
-                  confirmButtonText: "Aceptar",
-                });
-              }
-              return response;
-            })
-            .catch((error) => {
-              Alert.fire({
-                title: titleError,
-                confirmButtonColor: "#198754",
-                text: msjError,
-                icon: "error",
-                confirmButtonText: "Aceptar",
-              });
+      //console.log(rol);
+      return axios({
+        url: "/rol/",
+        method: "PUT",
+        data: JSON.stringify(rol),
+      })
+        .then((response) => {
+          console.log(response);
+          if (!response.error) {
+            handleCloseForm();
+            getRoles();
+            Alert.fire({
+              title: "Rol modificado correctamente",
+              icon: "success",
+              confirmButtonText: "Aceptar",
             });
-        },
-        backdrop: true,
-        allowOutsideClick: !Alert.isLoading,
-      });
+          }
+          return response;
+        })
+        .catch((error) => {
+          Alert.fire({
+            title: titleError,
+            confirmButtonColor: "#198754",
+            text: msjError,
+            icon: "error",
+            confirmButtonText: "Aceptar",
+          });
+        });
     },
   });
 

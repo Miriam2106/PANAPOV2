@@ -9,7 +9,7 @@ export const FilterComponent = ({ filterText, onFilter, onSearch }) => (
   <>
     <Col md={{ span: 4}}>
       <Form.Group className="mb-3">
-        <Form.Label>Buscar:</Form.Label>
+        <Form.Label className="font-weight-normal">Buscar:</Form.Label>
         <Form.Control
           id="search"
           type="text"

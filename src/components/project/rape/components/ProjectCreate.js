@@ -54,7 +54,7 @@ export const ProjectCreate = ({
                         formikPhases.values.report = response.data.id
                         formikPhases.handleSubmit();
                         Alert.fire({
-                            title: titleExito,
+                            title: "Reporte registrado correctamente",
                             confirmButtonColor: "#198754",
                             icon: "success",
                             confirmButtonText: "Aceptar",

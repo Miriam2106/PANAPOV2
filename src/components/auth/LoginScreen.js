@@ -20,7 +20,7 @@ import img from "../../assets/img/logo-cds.png";
 import FeatherIcon from "feather-icons-react";
 
 export const LoginScreen = (props) => {
- 
+
   const navigation = useNavigate();
   const { authContext } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false)
@@ -43,30 +43,55 @@ export const LoginScreen = (props) => {
         method: "POST",
         data: JSON.stringify(values),
       })
-        .then((response) => {
-          if (!response.error) {
-            console.log(response.data)
-            authContext.signIn(response.data.token, response.data.user.username, response.data.user)
-
-            //asignar los roles
-            let authorities = response.data.user.authorities;
-            let directivo, coordinador, rape, rd;
-            for (let i = 0; i < authorities.length; i++) {
-              if (authorities[i].authority === "Coordinador") {
-                coordinador = true;
-              }
-              if (authorities[i].authority === "Responsable de Proyecto") {
-                rape = true;
-              }
-              if (authorities[i].authority === "Responsable de Desarrollo") {
-                rd = true;
-              }
-              if (authorities[i].authority === "Directivo") {
-                directivo = true;
-              }
-            }
-            authContext.setRoles(directivo, coordinador, rape, rd);
-            navigation("/", { replace: true });
+        .then((response2) => {
+          if (!response2.error) {
+            let user = response2.data.user.username;
+            axios({ url: "/user/", method: "GET" })
+              .then((response) => {
+                let exist = false;
+                let actual = {};
+                let resp = response.data
+                for (let i = 0; i < resp.length; i++) {
+                  if (resp[i].username === user) {
+                    exist = true;
+                    actual = resp[i];
+                  }
+                }
+                if (exist) {
+                  if (actual.status.id === 1) {
+                    authContext.signIn(response2.data.token, response2.data.user.username, response2.data.user)
+                    //asignar los roles
+                    let authorities = response2.data.user.authorities;
+                    let directivo, coordinador, rape, rd;
+                    for (let i = 0; i < authorities.length; i++) {
+                      if (authorities[i].authority === "Coordinador") {
+                        coordinador = true;
+                      }
+                      if (authorities[i].authority === "Responsable de Proyecto") {
+                        rape = true;
+                      }
+                      if (authorities[i].authority === "Responsable de Desarrollo") {
+                        rd = true;
+                      }
+                      if (authorities[i].authority === "Directivo") {
+                        directivo = true;
+                      }
+                    }
+                    authContext.setRoles(directivo, coordinador, rape, rd);
+                    navigation("/", { replace: true });
+                  } else if(actual.status.id === 2){
+                    Alert.fire({
+                      title: "Verifique los datos",
+                      text: "Usuario y/o contraseña incorrectos",
+                      icon: "error",
+                      confirmButtonText: "Aceptar",
+                      confirmButtonColor: "#3085D6",
+                    });
+                  }
+                }
+              })
+              .catch((error) => {
+              });
           }
         })
         .catch((error) => {
