@@ -41,7 +41,7 @@ export const AppRouter = () => {
                       <AppMenu />
                       <Container fluid>
                         <Routes>
-                          <Route path={"/"} element={<DashboardScreen />} />
+                          <Route path={"/dashboard"} element={<DashboardScreen />} />
                           <Route path={"/project"} element={<ProjectScreen/>} />
                           <Route path={"/personal"} element={<PersonalScreen/>} />
                           <Route path={"/direction"} element={<DirectionScreen/>} />
@@ -49,7 +49,7 @@ export const AppRouter = () => {
                           <Route path={"/client"} element={<ClientScreen/>} />
                           <Route path={"/role"} element={<RoleScreen/>} />
                           <Route path={"/report"} element={<ReportScreen/>} />
-                          <Route path={"/config"} element={<ChangeRol/>} />
+                          <Route path={"/"} element={<ChangeRol/>} />
                           <Route path="*" element={<div>ERROR 404</div>} />
                         </Routes>
                       </Container>
@@ -64,10 +64,10 @@ export const AppRouter = () => {
                     <AppMenuRD />
                     <Container fluid>
                       <Routes>
-                        <Route path={"/"} element={<DashboardScreen />} />
+                        <Route path={"/dashboard"} element={<DashboardScreen />} />
                         <Route path={"/project"} element={<ProjectScreenRd />} />
                         <Route path={"/report"} element={<ReportScreen />} />
-                        <Route path={"/config"} element={<ChangeRol />} />
+                        <Route path={"/"} element={<ChangeRol />} />
                         <Route path="*" element={<div>ERROR 404</div>} />
                       </Routes>
                     </Container>
@@ -82,10 +82,10 @@ export const AppRouter = () => {
                     <AppMenuRAPE />
                     <Container fluid>
                       <Routes>
-                        <Route path={"/"} element={<DashboardScreen />} />
+                        <Route path={"/dashboard"} element={<DashboardScreen />} />
                         <Route path={"/project"} element={<ProjectScreenRape />} />
                         <Route path={"/report"} element={<ReportScreen />} />
-                        <Route path={"/config"} element={<ChangeRol />} />
+                        <Route path={"/"} element={<ChangeRol />} />
                         <Route path="*" element={<div>ERROR 404</div>} />
                       </Routes>
                     </Container>
@@ -100,8 +100,9 @@ export const AppRouter = () => {
                     <AppMenuDireccion />
                     <Container fluid>
                       <Routes>
-                        <Route path={"/"} element={<DashboardScreen />} />
+                        <Route path={"/dashboard"} element={<DashboardScreen />} />
                         <Route path="*" element={<div>ERROR 404</div>} />
+                        <Route path={"/report"} element={<ReportScreen />} />
                       </Routes>
                     </Container>
                   </div>

@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Row, Col, Container, Badge, Card, ProgressBar, Button } from "react-bootstrap";
-import FeatherIcon from "feather-icons-react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFile } from '@fortawesome/free-solid-svg-icons'
-import { library } from "@fortawesome/fontawesome-svg-core";
 import { useNavigate } from 'react-router-dom';
 import { CustomLoader } from "../../shared/components/CustomLoader";
 import DataTable from "react-data-table-component";
 import axios from "../../shared/plugins/axios";
 import { AlertData } from "../../shared/components/alertData"
 
-library.add(faFile);
 
 export const DashboardScreen = () => {
 
@@ -22,15 +19,20 @@ export const DashboardScreen = () => {
 
   let value = "";
   let nameProject = "";
+  let end = "";
+  let start = "";
   const navigation = useNavigate();
+  let username = localStorage.getItem("username")
 
   const handleReport = () => {
-    navigation('/report', { state: { id: value, name: nameProject } });
+    navigation('/report', { state: { id: value, name: nameProject, end: end, start: start } });
   }
 
-  const setValue = (id, acronym) => {
+  const setValue = (id, acronym, dateEnd, dateStart) => {
     value = id;
     nameProject = acronym;
+    end = dateEnd;
+    start = dateStart;
   }
 
   const getProjects = () => {
@@ -38,7 +40,6 @@ export const DashboardScreen = () => {
       .then((response) => {
         let data = response.data;
         let projectTemp = data.filter(item => item.statusProject.description !== "Prospecto")
-        console.log(projectTemp)
         for (let i = 0; i < projectTemp.length; i++) {
           let dateEnd = new Date(projectTemp[i].dateEnd).getTime();
           let dateStart = new Date(projectTemp[i].dateStart).getTime();
@@ -115,19 +116,13 @@ export const DashboardScreen = () => {
 
     },
     {
-      name: <h6>Acrónimo</h6>,
+      name: <h6>Identificador</h6>,
       cell: (row) => <div className="txt4 text-center">{row.acronym}</div>,
       width: "15%",
       center: true,
     },
     {
-      name: <h6>Nombre del proyecto</h6>,
-      cell: (row) => <div className="txt4 text-center">{row.name}</div>,
-      width: "25%",
-      center: true,
-    },
-    {
-      name: <h6 >Avance real del proyecto</h6>,
+      name: <h6 >% avance</h6>,
       cell: (row) => <div className="txt4">
         <ProgressBar now={row.percentage} variant="success" />
         <small>{row.percentage}% completado</small>
@@ -229,11 +224,11 @@ export const DashboardScreen = () => {
       name: <div><h6>Historial de reportes</h6></div>,
       cell: (row) => <div>
         <Button variant="success" size="md" onClick={() => {
-          setValue(row.id, row.acronym)
+          setValue(row.id, row.acronym, row.dateEnd, row.dateStart)
           handleReport()
         }}
         >
-          <FontAwesomeIcon icon={faFile} />
+          <FontAwesomeIcon icon={faFile} size="lg" className="btnS"/>
         </Button>
       </div>,
       center: true,

@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { ProjectDetails } from "../../coordinador/components/ProjectDetails";
 import axios from "../../../../shared/plugins/axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faFile, faInfo} from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faFile, faInfo } from '@fortawesome/free-solid-svg-icons'
 
 export const ProjectListRd = () => {
     const [filterText, setFilterText] = useState("");
@@ -24,18 +24,21 @@ export const ProjectListRd = () => {
 
     let value = "";
     let nameProject = "";
+    let end = "";
+    let start = "";
     const navigation = useNavigate();
     let username = localStorage.getItem("username")
 
     const handleReport = () => {
-        navigation('/report', { state: { id: value, name: nameProject } });
+        navigation('/report', { state: { id: value, name: nameProject, end: end, start: start } });
     }
 
-    const setValue = (id, acronym) => {
+    const setValue = (id, acronym, dateEnd, dateStart) => {
         value = id;
         nameProject = acronym;
+        end = dateEnd;
+        start = dateStart;
     }
-
     useEffect(() => {
         setIsLoading(true);
         getProjectsRd();
@@ -177,7 +180,7 @@ export const ProjectListRd = () => {
             name: <div><h6>Ver reportes</h6></div>,
             cell: (row) => <div>
                 <Button variant="success" size="md" onClick={() => {
-                    setValue(row.id, row.acronym)
+                    setValue(row.id, row.acronym, row.dateEnd, row.dateStart)
                     handleReport()
                 }}
                 >

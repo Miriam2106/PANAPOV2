@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { ProjectCreate } from "./ProjectCreate";
 import axios from "../../../../shared/plugins/axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faFile, faInfo} from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faFile, faInfo } from '@fortawesome/free-solid-svg-icons'
 
 export const ProjectListRape = () => {
   const [filterText, setFilterText] = useState("");
@@ -34,16 +34,22 @@ export const ProjectListRape = () => {
   const [isOpenData, setIsOpenData] = useState(false);
 
   let value = "";
+  let nameProject = "";
+  let end = "";
+  let start = "";
   const navigation = useNavigate();
   let username = localStorage.getItem("username")
 
   const handleReport = () => {
-    navigation("/report", { state: { id: value } });
-  };
+    navigation('/report', { state: { id: value, name: nameProject, end: end, start: start } });
+  }
 
-  const setValue = (id) => {
+  const setValue = (id, acronym, dateEnd, dateStart) => {
     value = id;
-  };
+    nameProject = acronym;
+    end = dateEnd;
+    start = dateStart;
+  }
 
   useEffect(() => {
     setIsLoading(true);
@@ -60,7 +66,6 @@ export const ProjectListRape = () => {
         for (let r = 0; r < data.length; r++) {
           for (let m = 0; m < data[r].team.length; m++) {
             let temp = data[r];
-            console.log(data[r].team[m].rolProject.description + " " + data[r].team[m].person.email)
             if (data[r].team[m].rolProject.description === "RAPE" && data[r].team[m].person.email === username) {
               arrTemp.push(temp)
             }
@@ -109,11 +114,11 @@ export const ProjectListRape = () => {
       cell: (row) => <div className="txt4">{row.acronym}</div>,
     },
     {
-      name: <h6>Avance real del proyecto</h6>,
+      name: <h6>% de avance</h6>,
       cell: (row) => (
         <div className="txt4">
           <ProgressBar now={row.percentage} variant="success" />
-          <small>{row.percentage}% completado</small>,
+          <small>{row.percentage}% completado</small>
         </div>
       ),
     },
@@ -224,7 +229,7 @@ export const ProjectListRape = () => {
             variant="success"
             size="md"
             onClick={() => {
-              setValue(row.id);
+              setValue(row.id, row.acronym, row.dateEnd, row.dateStart);
               handleReport();
             }}
           >

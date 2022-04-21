@@ -71,7 +71,6 @@ export const ProjectDetails = ({
   };
 
   const getTeam = () => {
-    console.log(personTeam)
     if (personTeam.length > 0) {
       let temp = [];
       for (let i = 0; i < personTeam.length; i++) {
@@ -101,10 +100,7 @@ export const ProjectDetails = ({
         }
       }
       setProgrammers(temp);
-      console.log(programmers)
-      console.log("Sí hay team")
     } else {
-      console.log("No hay team")
       setRdTeam({ name: "", surname: "", secondSurname: "", email: "" })
       setProgrammers([]);
       personTeam = [];
@@ -132,7 +128,6 @@ export const ProjectDetails = ({
       status: status
     });
     personTeam = team === undefined ? [] : team;
-    console.log(personTeam)
     getTeam();
   }, [isOpenDetails]);
 

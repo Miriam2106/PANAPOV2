@@ -9,11 +9,9 @@ import axios from "../../../shared/plugins/axios";
 import { CustomLoader } from "../../../shared/components/CustomLoader";
 import { FilterComponent } from "../../../shared/components/FilterComponent";
 import Alert, { msjConfirmacion, titleConfirmacion, titleError, msjError, msjExito, titleExito } from "../../../shared/plugins/alert";
-import main from "../../../assets/css/main.css";
 import { AlertData } from "../../../shared/components/alertData"
 //iconos de fontawesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { library } from "@fortawesome/fontawesome-svg-core";
 import { faEdit } from '@fortawesome/free-solid-svg-icons'
 
 export const RoleList = () => {
@@ -46,14 +44,14 @@ export const RoleList = () => {
             description: ""
         },
         validationSchema: yup.object().shape({
-            acronym: yup
-                .string()
-                .required("Campo obligatorio")
-                .min(2, "Minimo 2 caracteres"),
-            description: yup
-                .string()
-                .required("Campo obligatorio")
-                .min(2, "Minimo 2 caracteres"),
+            // acronym: yup
+            //     .string()
+            //     .required("Campo obligatorio")
+            //     .min(2, "Minimo 2 caracteres"),
+            // description: yup
+            //     .string()
+            //     .required("Campo obligatorio")
+            //     .min(2, "Minimo 2 caracteres"),
         }),
         onSubmit: (values) => {
             const rol = {
@@ -225,7 +223,7 @@ export const RoleList = () => {
                                             </Form.Group>
                                             <div className="d-grid gap-2">
                                                 <Button type="submit" style={{ background: "#042B61", borderColor: "#042B61" }} size="lg"
-                                                    disabled={!(formik.isValid && formik.dirty)}>
+                                                    disabled={true}>
                                                     Registrar
                                                 </Button>
                                             </div>

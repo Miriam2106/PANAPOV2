@@ -300,112 +300,96 @@ export const ProjectStart = ({
           numberBeca: num
         };
       }
-      console.log(project);
-      Alert.fire({
-        title: titleConfirmacion,
-        text: msjConfirmacion,
-        confirmButtonText: "Aceptar",
-        cancelButtonText: "Cancelar",
-        confirmButtonColor: "#198754",
-        cancelButtonColor: "#dc3545",
-        showCancelButton: true,
-        reverseButtons: true,
-        showLoaderOnConfirm: true,
-        icon: "warning",
-        preConfirm: () => {
-          axios({ url: "/project/", method: "PUT", data: JSON.stringify(project) })
-            .then((response) => {
-              if (!response.error) {
-                console.log("proyecto")
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-
-          let rdTemp = {
-            project: {
-              id: values.id
-            },
-            person: {
-              id: parseInt(valuesFormik.rd)
-            },
-            rolProject: {
-              id: 1
-            }
+      //console.log(project);
+      axios({ url: "/project/", method: "PUT", data: JSON.stringify(project) })
+        .then((response) => {
+          if (!response.error) {
+            console.log("proyecto")
           }
-          console.log(rdTemp);
-          axios({ url: "/personteam/", method: "POST", data: JSON.stringify(rdTemp) })
-            .then(async(response) => {
-              if (!response.error) {
-                console.log("rd")
-                let rapeTemp = {
-                  project: {
-                    id: values.id
-                  },
-                  person: {
-                    id: parseInt(valuesFormik.rape)
-                  },
-                  rolProject: {
-                    id: 2
-                  }
-                }
-                console.log(rapeTemp);
-                await axios({ url: "/personteam/", method: "POST", data: JSON.stringify(rapeTemp) })
-                  .then((response) => {
-                    if (!response.error) {
-                      console.log("rape")
-                    }
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                  });
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-          let programadores = [];
-          programadores = programmers
-          for (let i = 0; i < programadores.length; i++) {
-            let idTemp = programadores[i].id
-            let tempProg = {
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      let rdTemp = {
+        project: {
+          id: values.id
+        },
+        person: {
+          id: parseInt(valuesFormik.rd)
+        },
+        rolProject: {
+          id: 1
+        }
+      }
+      console.log(rdTemp);
+      axios({ url: "/personteam/", method: "POST", data: JSON.stringify(rdTemp) })
+        .then(async (response) => {
+          if (!response.error) {
+            console.log("rd")
+            let rapeTemp = {
               project: {
                 id: values.id
               },
               person: {
-                id: idTemp
+                id: parseInt(valuesFormik.rape)
               },
               rolProject: {
-                id: 3
+                id: 2
               }
             }
-            axios({ url: "/personteam/", method: "POST", data: JSON.stringify(tempProg) })
+            console.log(rapeTemp);
+            await axios({ url: "/personteam/", method: "POST", data: JSON.stringify(rapeTemp) })
               .then((response) => {
                 if (!response.error) {
-                  console.log("yes")
+                  console.log("rape")
                 }
               })
               .catch((error) => {
                 console.log(error);
               });
-            getProspectProject()
-            getProyectos()
-            Alert.fire({
-              title: "Proyecto iniciado correctamente",
-              confirmButtonColor: "#198754",
-              icon: "success",
-              confirmButtonText: "Aceptar",
-            }).then((result) => {
-              if (result.isConfirmed) {
-                handleCloseForm();
-              }
-            });
           }
-        },
-        backdrop: true,
-        allowOutsideClick: !Alert.isLoading,
-      });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      let programadores = [];
+      programadores = programmers
+      for (let i = 0; i < programadores.length; i++) {
+        let idTemp = programadores[i].id
+        let tempProg = {
+          project: {
+            id: values.id
+          },
+          person: {
+            id: idTemp
+          },
+          rolProject: {
+            id: 3
+          }
+        }
+        axios({ url: "/personteam/", method: "POST", data: JSON.stringify(tempProg) })
+          .then((response) => {
+            if (!response.error) {
+              console.log("yes")
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        getProspectProject()
+        getProyectos()
+        Alert.fire({
+          title: "Proyecto iniciado correctamente",
+          confirmButtonColor: "#198754",
+          icon: "success",
+          confirmButtonText: "Aceptar",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            handleCloseForm();
+          }
+        });
+      }
     },
   });
 

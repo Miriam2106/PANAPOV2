@@ -28,15 +28,20 @@ library.add(faEdit, faFile, faInfo);
 export const ProjectList = () => {
     let value = "";
     let nameProject = "";
+    let end = "";
+    let start = "";
     const navigation = useNavigate();
+    let username = localStorage.getItem("username")
 
     const handleReport = () => {
-        navigation('/report', { state: { id: value, name: nameProject } });
+        navigation('/report', { state: { id: value, name: nameProject, end: end, start: start } });
     }
 
-    const setValue = (id, acronym) => {
+    const setValue = (id, acronym, dateEnd, dateStart) => {
         value = id;
         nameProject = acronym;
+        end = dateEnd;
+        start = dateStart;
     }
 
     const [filterText, setFilterText] = useState("");
@@ -159,7 +164,7 @@ export const ProjectList = () => {
             width: "15%"
         },
         {
-            name: <h6>Avance real del proyecto</h6>,
+            name: <h6>% de avance</h6>,
             cell: (row) => <div className="txt4">
                 <ProgressBar now={row.percentage} variant="success" />
                 <small>{row.percentage}% completado</small>
@@ -255,7 +260,7 @@ export const ProjectList = () => {
             name: <div><h6>Reportes</h6></div>,
             cell: (row) => <div>
                 <Button variant="success" size="md" onClick={() => {
-                    setValue(row.id, row.acronym)
+                    setValue(row.id, row.acronym, row.dateEnd, row.dateStart)
                     handleReport()
                 }}
                 >
@@ -357,10 +362,10 @@ export const ProjectList = () => {
             name: yup.string().required("Campo obligatorio"),
             description: yup.string().required("Campo obligatorio"),
             client: yup.string().required("Campo obligatorio"),
-            cotizacion: yup.number().required("Campo obligatorio"),
-            priceClient: yup.number().required("Campo obligatorio"),
-            months: yup.number().required("Campo obligatorio"),
-            numberBeca: yup.number().required("Campo obligatorio"),
+            cotizacion: yup.number().required("Campo obligatorio").min(1, "El valor tiene que ser mayor a cero"),
+            priceClient: yup.number().required("Campo obligatorio").min(1, "El valor tiene que ser mayor a cero"),
+            months: yup.number().required("Campo obligatorio").min(1, "El valor tiene que ser mayor a cero"),
+            numberBeca: yup.number().required("Campo obligatorio").min(1, "El valor tiene que ser mayor a cero").max(10, "El valor máximo de becarios es de 10"),
             project: yup.number()
         }),
         onSubmit: (values) => {
@@ -387,54 +392,38 @@ export const ProjectList = () => {
                 };
             }
             //console.log(project);
-            Alert.fire({
-                title: titleConfirmacion,
-                text: msjConfirmacion,
-                confirmButtonText: "Aceptar",
-                cancelButtonText: "Cancelar",
-                confirmButtonColor: "#198754",
-                cancelButtonColor: "#dc3545",
-                showCancelButton: true,
-                reverseButtons: true,
-                showLoaderOnConfirm: true,
-                icon: "warning",
-                preConfirm: () => {
-                    return axios({ url: "/project/", method: "POST", data: JSON.stringify(project) })
-                        .then((response) => {
-                            if (!response.error) {
-                                getProjects();
-                                getClients();
-                                getProspectProject();
-                                getSelectProjects();
-                                Alert.fire({
-                                    title: titleExito,
-                                    text: msjExito,
-                                    confirmButtonColor: "#198754",
-                                    icon: "success",
-                                    confirmButtonText: "Aceptar",
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        handleCloseForm();
-                                        setIsOpenProspect(true)
-                                    }
-                                });
+            return axios({ url: "/project/", method: "POST", data: JSON.stringify(project) })
+                .then((response) => {
+                    if (!response.error) {
+                        getProjects();
+                        getClients();
+                        getProspectProject();
+                        getSelectProjects();
+                        Alert.fire({
+                            title: titleExito,
+                            text: msjExito,
+                            confirmButtonColor: "#198754",
+                            icon: "success",
+                            confirmButtonText: "Aceptar",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                handleCloseForm();
+                                setIsOpenProspect(true)
                             }
-                            return response;
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                            Alert.fire({
-                                title: titleError,
-                                text: msjError,
-                                cancelButtonColor: "#198754",
-                                icon: "error",
-                                confirmButtonText: "Aceptar",
-                            });
                         });
-                },
-                backdrop: true,
-                allowOutsideClick: !Alert.isLoading,
-            });
+                    }
+                    return response;
+                })
+                .catch((error) => {
+                    console.log(error);
+                    Alert.fire({
+                        title: titleError,
+                        text: msjError,
+                        cancelButtonColor: "#198754",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                });
         },
     });
 

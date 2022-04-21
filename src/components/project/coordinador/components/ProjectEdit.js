@@ -37,64 +37,39 @@ export const ProjectEdit = ({
           id: parseInt(valuesFormik.statusProject),
         }
       };
-      console.log(project1);
-      Alert.fire({
-        title: titleConfirmacion,
-        text: msjConfirmacion,
-        confirmButtonText: "Aceptar",
-        cancelButtonText: "Cancelar",
-        showCancelButton: true,
-        reverseButtons: true,
-        showLoaderOnConfirm: true,
-        icon: "warning",
-        preConfirm: () => {
-          console.log("entró ");
-          return axios({
-            url: "/project/update",
-            method: "PUT",
-            data: JSON.stringify(project1),
+      return axios({
+        url: "/project/update",
+        method: "PUT",
+        data: JSON.stringify(project1),
 
-          })
-            .then((response) => {
-              console.log(response);
-              console.log("Si hizo el cambio");
-              console.log(project1);
-              if (!response.error) {
-                getProjects();
-                getProspectProject();
-                getSelectProjects();
-                Alert.fire({
-                  title: titleExito,
-                  text: msjExito,
-                  icon: "success",
-                  confirmButtonText: "Aceptar",
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    handleCloseForm();
-                  }
-                });
+      })
+        .then((response) => {
+          console.log(response);
+          if (!response.error) {
+            getProjects();
+            getProspectProject();
+            getSelectProjects();
+            Alert.fire({
+              title: "Proyecto modificado correctamente",
+              icon: "success",
+              confirmButtonText: "Aceptar",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                handleCloseForm();
               }
-              return response;
-            })
-            .catch((error) => {
-              console.log(error);
-              Alert.fire({
-                title: titleError,
-                confirmButtonColor: "#198754",
-                text: msjError,
-                icon: "error",
-                confirmButtonText: "Aceptar",
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  handleCloseForm();
-                }
-              });
-              console.log("No hizo el cambio");
             });
-        },
-        backdrop: true,
-        allowOutsideClick: !Alert.isLoading,
-      });
+          }
+          return response;
+        })
+        .catch((error) => {
+          Alert.fire({
+            title: titleError,
+            confirmButtonColor: "#198754",
+            text: msjError,
+            icon: "error",
+            confirmButtonText: "Aceptar",
+          });
+        });
     },
   });
 

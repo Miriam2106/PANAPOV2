@@ -27,8 +27,8 @@ export const ProjectCreate = ({
             phaseReal: yup.string().required("Campo obligatorio"),
             stagePlanned: yup.string().required("Campo obligatorio"),
             stageReal: yup.string().required("Campo obligatorio"),
-            percentage: yup.number().required("Campo obligatorio"),
-            cost: yup.number().required("Campo obligatorio"),
+            percentage: yup.number().required("Campo obligatorio").min(1, "El valor tiene que ser mayor a cero"),
+            cost: yup.number().required("Campo obligatorio").min(1, "El valor tiene que ser mayor a cero"),
             daysDeviation: yup.number().required("Campo obligatorio"),
         }),
         onSubmit: (values) => {
@@ -48,49 +48,33 @@ export const ProjectCreate = ({
                 date: finalDate
             };
             console.log(report);
-            Alert.fire({
-                title: titleConfirmacion,
-                text: msjConfirmacion,
-                confirmButtonText: "Aceptar",
-                cancelButtonText: "Cancelar",
-                confirmButtonColor: "#198754",
-                cancelButtonColor: "#dc3545",
-                showCancelButton: true,
-                reverseButtons: true,
-                showLoaderOnConfirm: true,
-                icon: "warning",
-                preConfirm: () => {
-                    axios({ url: "/report/", method: "POST", data: JSON.stringify(report) })
-                        .then((response) => {
-                            if (!response.error) {
-                                formikPhases.values.report = response.data.id
-                                formikPhases.handleSubmit();
-                                Alert.fire({
-                                    title: titleExito,
-                                    confirmButtonColor: "#198754",
-                                    icon: "success",
-                                    confirmButtonText: "Aceptar",
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        handleCloseForm();
-                                    }
-                                });
+            axios({ url: "/report/", method: "POST", data: JSON.stringify(report) })
+                .then((response) => {
+                    if (!response.error) {
+                        formikPhases.values.report = response.data.id
+                        formikPhases.handleSubmit();
+                        Alert.fire({
+                            title: titleExito,
+                            confirmButtonColor: "#198754",
+                            icon: "success",
+                            confirmButtonText: "Aceptar",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                handleCloseForm();
                             }
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                            Alert.fire({
-                                title: titleError,
-                                text: msjError,
-                                cancelButtonColor: "#198754",
-                                icon: "error",
-                                confirmButtonText: "Aceptar",
-                            });
                         });
-                },
-                backdrop: true,
-                allowOutsideClick: !Alert.isLoading,
-            });
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    Alert.fire({
+                        title: titleError,
+                        text: msjError,
+                        cancelButtonColor: "#198754",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                });
         },
     });
 
@@ -106,6 +90,11 @@ export const ProjectCreate = ({
         },
         validationSchema: yup.object().shape({
             report: yup.string().required("Campo obligatorio"),
+            inicio: yup.number().min(0, "El valor tiene que ser mayor o igual a cero"),
+            requerimientos: yup.number().min(0, "El valor tiene que ser mayor o igual a cero"),
+            construccion: yup.number().min(0, "El valor tiene que ser mayor o igual a cero"),
+            analisis: yup.number().min(0, "El valor tiene que ser mayor o igual a cero"),
+            integracion: yup.number().min(0, "El valor tiene que ser mayor o igual a cero"),
         }),
         onSubmit: (values) => {
             let fase = {
@@ -289,12 +278,34 @@ export const ProjectCreate = ({
         <>
             <Modal show={isOpenCreateReport} onHide={handleCloseForm} size="lg" >
                 <Modal.Header closeButton className="backgroundHeadModal" closeVariant="white">
-                    <Modal.Title>Crear reporte</Modal.Title>
+                    <Modal.Title>Hacer reporte</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form className="row" onSubmit={formik.handleSubmit}>
+                        <Form.Group className="col-md-12 mb-1">
+                            <h5>Datos de inversión</h5>
+                        </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
-                            <Form.Label className="font-weight-normal">Etapa planeada</Form.Label>
+                            <Form.Label className="font-weight-normal">Costo total de inversión<span className="text-danger">*</span></Form.Label>
+                            <Form.Control type="number" placeholder="Ejemplo: 60000" name="cost" value={formik.values.cost}
+                                onChange={formik.handleChange} />
+                            {formik.errors.cost ? (
+                                <span className='text-danger'>{formik.errors.cost}</span>
+                            ) : null}
+                        </Form.Group>
+                        <Form.Group className="col-md-6 mb-4" >
+                            <Form.Label className="font-weight-normal">Días de desviación<span className="text-danger">*</span></Form.Label>
+                            <Form.Control type="number" placeholder="Ejemplo: 10" name="daysDeviation" value={formik.values.daysDeviation}
+                                onChange={formik.handleChange} />
+                            {formik.errors.daysDeviation ? (
+                                <span className='text-danger'>{formik.errors.daysDeviation}</span>
+                            ) : null}
+                        </Form.Group>
+                        <Form.Group className="col-md-12 mb-1">
+                            <h5>Estado de avance</h5>
+                        </Form.Group>
+                        <Form.Group className="col-md-6 mb-4" >
+                            <Form.Label className="font-weight-normal">Etapa planeada (APE)<span className="text-danger">*</span></Form.Label>
                             <Form.Select name="stagePlanned" value={formik.values.stagePlanned}
                                 onChange={formik.handleChange}>
                                 <option value="">Seleccione una opción</option>
@@ -308,7 +319,7 @@ export const ProjectCreate = ({
                             ) : null}
                         </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
-                            <Form.Label className="font-weight-normal">Etapa real</Form.Label>
+                            <Form.Label className="font-weight-normal">Etapa real (APE)<span className="text-danger">*</span></Form.Label>
                             <Form.Select name="stageReal" value={formik.values.stageReal}
                                 onChange={formik.handleChange}>
                                 <option value="">Seleccione una opción</option>
@@ -322,7 +333,7 @@ export const ProjectCreate = ({
                             ) : null}
                         </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
-                            <Form.Label className="font-weight-normal">Fase planeada</Form.Label>
+                            <Form.Label className="font-weight-normal">Fase planeada (DMS)<span className="text-danger">*</span></Form.Label>
                             <Form.Select name="phasePlanned" value={formik.values.phasePlanned}
                                 onChange={formik.handleChange}>
                                 <option value="">Seleccione una opción</option>
@@ -338,7 +349,7 @@ export const ProjectCreate = ({
                             ) : null}
                         </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
-                            <Form.Label className="font-weight-normal">Fase real</Form.Label>
+                            <Form.Label className="font-weight-normal">Fase real (DMS)<span className="text-danger">*</span></Form.Label>
                             <Form.Select name="phaseReal" value={formik.values.phaseReal}
                                 onChange={formik.handleChange}>
                                 <option value="">Seleccione una opción</option>
@@ -354,61 +365,63 @@ export const ProjectCreate = ({
                             ) : null}
                         </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
-                            <Form.Label className="font-weight-normal">Costo total de inversión</Form.Label>
-                            <Form.Control type="number" placeholder="Ejemplo: 60000" name="cost" value={formik.values.cost}
-                                onChange={formik.handleChange} />
-                            {formik.errors.cost ? (
-                                <span className='text-danger'>{formik.errors.cost}</span>
-                            ) : null}
-                        </Form.Group>
-                        <Form.Group className="col-md-6 mb-4" >
-                            <Form.Label className="font-weight-normal">Días de desviación</Form.Label>
-                            <Form.Control type="number" placeholder="Ejemplo: 10" name="daysDeviation" value={formik.values.daysDeviation}
-                                onChange={formik.handleChange} />
-                            {formik.errors.daysDeviation ? (
-                                <span className='text-danger'>{formik.errors.daysDeviation}</span>
-                            ) : null}
-                        </Form.Group>
-                        <Form.Group className="col-md-6 mb-4" >
-                            <Form.Label className="font-weight-normal">Porcentaje de avance total (%)</Form.Label>
+                            <Form.Label className="font-weight-normal">Porcentaje de avance total (%)<span className="text-danger">*</span></Form.Label>
                             <Form.Control type="number" placeholder="Ejemplo: 20" name="percentage" value={formik.values.percentage}
                                 onChange={formik.handleChange} />
                             {formik.errors.percentage ? (
                                 <span className='text-danger'>{formik.errors.percentage}</span>
                             ) : null}
                         </Form.Group>
-                        <Form.Group className="col-md-12 mb-4">
+                        <Form.Group className="col-md-12 mb-1">
                             <h5>Porcentaje de avance por fase</h5>
                         </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
                             <Form.Label className="font-weight-normal">Inicio</Form.Label>
                             <Form.Control type="number" placeholder="Ejemplo: 20" name="inicio" value={formikPhases.values.inicio}
                                 onChange={formikPhases.handleChange} />
+                            {formikPhases.errors.inicio ? (
+                                <span className='text-danger'>{formikPhases.errors.inicio}</span>
+                            ) : null}
                         </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
                             <Form.Label className="font-weight-normal">Requerimientos</Form.Label>
                             <Form.Control type="number" placeholder="Ejemplo: 20" name="requerimientos" value={formikPhases.values.requerimientos}
                                 onChange={formikPhases.handleChange} />
+                            {formikPhases.errors.requerimientos ? (
+                                <span className='text-danger'>{formikPhases.errors.requerimientos}</span>
+                            ) : null}
                         </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
                             <Form.Label className="font-weight-normal">Análisis y diseño</Form.Label>
                             <Form.Control type="number" placeholder="Ejemplo: 20" name="analisis" value={formikPhases.values.analisis}
                                 onChange={formikPhases.handleChange} />
+                            {formikPhases.errors.analisis ? (
+                                <span className='text-danger'>{formikPhases.errors.analisis}</span>
+                            ) : null}
                         </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
                             <Form.Label className="font-weight-normal">Construcción</Form.Label>
                             <Form.Control type="number" placeholder="Ejemplo: 20" name="construccion" value={formikPhases.values.construccion}
                                 onChange={formikPhases.handleChange} />
+                            {formikPhases.errors.construccion ? (
+                                <span className='text-danger'>{formikPhases.errors.construccion}</span>
+                            ) : null}
                         </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
                             <Form.Label className="font-weight-normal">Integración y pruebas</Form.Label>
                             <Form.Control type="number" placeholder="Ejemplo: 20" name="integracion" value={formikPhases.values.integracion}
                                 onChange={formikPhases.handleChange} />
+                            {formikPhases.errors.integracion ? (
+                                <span className='text-danger'>{formikPhases.errors.integracion}</span>
+                            ) : null}
                         </Form.Group>
                         <Form.Group className="col-md-6 mb-4" >
                             <Form.Label className="font-weight-normal">Cierre</Form.Label>
                             <Form.Control type="number" placeholder="Ejemplo: 20" name="cierre" value={formikPhases.values.cierre}
                                 onChange={formikPhases.handleChange} />
+                            {formikPhases.errors.cierre ? (
+                                <span className='text-danger'>{formikPhases.errors.cierre}</span>
+                            ) : null}
                         </Form.Group>
                         <Form.Group className="mb-4 topBottom">
                             <Row>

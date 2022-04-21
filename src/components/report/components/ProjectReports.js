@@ -7,13 +7,15 @@ import { ReportDetails } from './ReportDetails';
 import axios from "../../../shared/plugins/axios";
 import { useNavigate } from 'react-router-dom';
 import { AlertData } from "../../../shared/components/alertData"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBars } from '@fortawesome/free-solid-svg-icons'
 
 export const ProjectReports = ({
-  data, name
+  data, name, dateEnd, dateStart
 }) => {
   const navigation = useNavigate();
 
-  const [values, setValues] = useState({ data: data, name: name });
+  const [values, setValues] = useState({ data: data, name: name, dateEnd: dateEnd, dateStart: dateStart });
   const [isLoading, setIsLoading] = useState(false);
   const [reports, setReports] = useState([]);
 
@@ -22,9 +24,9 @@ export const ProjectReports = ({
   useEffect(() => {
     setIsLoading(true);
     setValues({
-      data: data,  name: name 
+      data: data, name: name, dateEnd: dateEnd, dateStart: dateStart 
     })
-    console.log(data)
+    console.log(dateEnd)
     document.title = "PANAPO | Reportes";
     getReport();
   }, [])
@@ -33,8 +35,23 @@ export const ProjectReports = ({
     axios({ url: "/report/", method: "GET" })
       .then((response) => {
         let temp = response.data;
-        console.log(temp);
         let reportTemp = temp.filter(item => item.project?.id === data);
+        for (let i = 0; i < reportTemp.length; i++) {
+          let end = new Date(dateEnd).getTime();
+          let start = new Date(dateStart).getTime();
+          let diferencia = end - start;
+          let final = diferencia / (1000 * 60 * 60 * 24)
+          let porcentaje = (final * reportTemp[i].daysDeviation) / 100;
+
+          if (porcentaje < 0) {
+            porcentaje = porcentaje * -1;
+          }
+          let dataTemp = {
+            ...reportTemp[i],
+            porDias: porcentaje
+          }
+          reportTemp[i] = dataTemp
+        }
         setReports(reportTemp);
         console.log(reportTemp);
         setIsLoading(false);
@@ -59,20 +76,8 @@ export const ProjectReports = ({
       compact: true
     },
     {
-      name: <h6>Etapa planeada</h6>,
-      cell: (row) => <div className="txt4">{row.stagePlanned}</div>,
-      center: true,
-      compact: true
-    },
-    {
       name: <h6>Etapa real</h6>,
       cell: (row) => <div className="txt4">{row.stageReal}</div>,
-      center: true,
-      compact: true
-    },
-    {
-      name: <h6>Fase planeada</h6>,
-      cell: (row) => <div className="txt4">{row.phasePlanned}</div>,
       center: true,
       compact: true
     },
@@ -83,7 +88,7 @@ export const ProjectReports = ({
       compact: true
     },
     {
-      name: <h6>Porcentaje de avance total</h6>,
+      name: <h6>% de avance</h6>,
       cell: (row) => <Container fluid>
         <ProgressBar now={row.percentage} variant="success" visuallyHidden />
         <div className='text-center'><small>{row.percentage}% completado</small></div>
@@ -93,7 +98,7 @@ export const ProjectReports = ({
       compact: true
     },
     {
-      name: <h6>Porcentaje de avance por fase</h6>,
+      name: <div><h6>Detalles</h6></div>,
       cell: (row) => <div>
         <Button variant="primary" size="md"
           onClick={() => {
@@ -101,14 +106,13 @@ export const ProjectReports = ({
             console.log(row)
             setIsOpen(true)
           }}>
-          <FeatherIcon icon="list" />
+          <FontAwesomeIcon icon={faBars} size="lg" className="btnS" />
         </Button>
       </div>,
       center: true,
-      compact: true
     },
     {
-      name: <h6>Costo total de inversión</h6>,
+      name: <h6>$ de inversión</h6>,
       cell: (row) => <div className="txt4 align-center-items">${row.cost}</div>,
       right: false,
       compact: true
@@ -116,23 +120,34 @@ export const ProjectReports = ({
     {
       name: <h6>Días de desviación</h6>,
       cell: (row) =>
-        <>
+        <div className='text-center'>
           {
-            row.daysDeviation <= 0 ? (
+            row.daysDeviation === null || row.daysDeviation === undefined ? (
+              <h6>
+                <Badge bg="secondary">
+                  <div>No hay reportes</div>
+                </Badge>
+              </h6>
+            ) : (row.porDias >= 0 && row.porDias <= 10 ?
               <h6>
                 <Badge bg="success">
                   <div>{row.daysDeviation}</div>
                 </Badge>
-              </h6>
-            ) : (
-              <h6>
-                <Badge bg="danger">
-                  <div>{row.daysDeviation}</div>
-                </Badge>
-              </h6>
+              </h6> : (row.porDias > 10 && row.porDias <= 15 ?
+                <h6>
+                  <Badge bg="orange">
+                    <div>{row.daysDeviation}</div>
+                  </Badge>
+                </h6> :
+                <h6>
+                  <Badge bg="danger">
+                    <div>{row.daysDeviation}</div>
+                  </Badge>
+                </h6>
+              )
             )
           }
-        </>,
+        </div>,
       compact: true
     }
   ];
@@ -150,12 +165,6 @@ export const ProjectReports = ({
             <div class="row mb-2">
               <div class="col-sm-6">
                 <h1 class="font-weight-bold">Reportes de {name}</h1>
-              </div>
-              <div class="col-sm-6 text-end">
-                <Button className="btn" style={{ background: "#042B61", borderColor: "#042B61" }}
-                onClick={()=>navigation("/", { replace: true })}>
-                  Volver al Panel de proyectos
-                </Button>
               </div>
             </div>
           </div>
@@ -183,6 +192,7 @@ export const ProjectReports = ({
                   isOpen={isOpen}
                   handleClose={setIsOpen}
                   data={data}
+                  {...values}
                 />
               </Card.Body>
             </Card>

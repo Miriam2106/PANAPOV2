@@ -60,7 +60,7 @@ export const ChangeRol = () => {
         </section>
         <Row>
           {
-            rd === "true" && rolActivo != "RD" ?
+            rd === "true"?
               <Col >
                 <Card>
                   <Card.Body className='roles'>
@@ -72,7 +72,7 @@ export const ChangeRol = () => {
                       <Button type="submit" style={{ background: "#042B61", borderColor: "#042B61" }}
                         onClick={() => {
                           authContext.setRoleActive("RD")
-                          navigation("/", { replace: true })
+                          navigation("/dashboard", { replace: true })
                           alert()
                         }}>
                         Cambiar <FeatherIcon icon="log-out" />
@@ -84,7 +84,7 @@ export const ChangeRol = () => {
               : null
           }
           {
-            rape === "true" && rolActivo != "RAPE" ?
+            rape === "true" ?
               <Col>
                 <Card>
                   <Card.Body className='roles'>
@@ -96,7 +96,7 @@ export const ChangeRol = () => {
                       <Button type="submit" style={{ background: "#042B61", borderColor: "#042B61" }}
                         onClick={() => {
                           authContext.setRoleActive("RAPE")
-                          navigation("/", { replace: true })
+                          navigation("/dashboard", { replace: true })
                           alert()
                         }}>
                         Cambiar <FeatherIcon icon="log-out" />
@@ -108,7 +108,7 @@ export const ChangeRol = () => {
               : null
           }
           {
-            directivo === "true" && rolActivo != "DIRECTIVO" ?
+            directivo === "true" ?
               <Col>
                 <Card>
                   <Card.Body className='roles'>
@@ -120,7 +120,7 @@ export const ChangeRol = () => {
                       <Button type="submit" style={{ background: "#042B61", borderColor: "#042B61" }}
                         onClick={() => {
                           authContext.setRoleActive("DIRECTIVO")
-                          navigation("/", { replace: true })
+                          navigation("/dashboard", { replace: true })
                           alert()
                         }}
                       >
@@ -132,7 +132,7 @@ export const ChangeRol = () => {
               : null
           }
           {
-            coordinador === "true" && rolActivo != "COORDINADOR" ?
+            coordinador === "true"  ?
               <Col>
                 <Card>
                   <Card.Body className='roles'>
@@ -144,7 +144,7 @@ export const ChangeRol = () => {
                       <Button type="submit" style={{ background: "#042B61", borderColor: "#042B61" }}
                         onClick={() => {
                           authContext.setRoleActive("COORDINADOR")
-                          navigation("/", { replace: true })
+                          navigation("/dashboard", { replace: true })
                           alert()
                         }}>
                         Cambiar <FeatherIcon icon="log-out" /></Button>

@@ -12,7 +12,7 @@ export const AppMenuRAPE = () => {
           <nav className="mt-2">
             <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
               <li className="nav-item">
-                <Link to={"/"} className="nav-link">
+                <Link to={"/dashboard"} className="nav-link">
                   <i className="nav-icon far fa-calendar-alt"></i>
                   <p>
                     Panel de proyectos
@@ -28,7 +28,7 @@ export const AppMenuRAPE = () => {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to={"/config"} className="nav-link">
+                <Link to={"/"} className="nav-link">
                   <i className="nav-icon far fa-calendar-alt"></i>
                   <p>
                     Configuración
