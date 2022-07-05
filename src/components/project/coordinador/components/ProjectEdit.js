@@ -44,7 +44,6 @@ export const ProjectEdit = ({
 
       })
         .then((response) => {
-          console.log(response);
           if (!response.error) {
             getProjects();
             getProspectProject();

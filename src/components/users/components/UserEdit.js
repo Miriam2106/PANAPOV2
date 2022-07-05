@@ -44,14 +44,12 @@ export const UserEdit = ({
                 id: id,
                 
             };
-            //console.log(pass);
             return axios({
                 url: "/user/update",
                 method: "PUT",
                 data: JSON.stringify(pass),
             })
                 .then((response) => {
-                    console.log(response);
                     if (!response.error) {
                         handleCloseForm();
                         // getPersonal();

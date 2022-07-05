@@ -30,7 +30,9 @@ export const ClientList = () => {
     const [isOpenDetails, setIsOpenDetails] = useState(false);
 
     const filteredItems = clients.filter(
-        (item) => item.name && item.name.toLowerCase().includes(filterText.toLowerCase()) || item.surname && item.surname.toLowerCase().includes(filterText.toLowerCase()) || item.second_surname && item.second_surname.toLowerCase().includes(filterText.toLowerCase()),
+        (item) => item.name && item.name.toLowerCase().includes(filterText.toLowerCase()) || 
+        item.surname && item.surname.toLowerCase().includes(filterText.toLowerCase()) || 
+        item.second_surname && item.second_surname.toLowerCase().includes(filterText.toLowerCase()),
     );
 
     useEffect(() => {
@@ -94,7 +96,6 @@ export const ClientList = () => {
                     id: parseInt(values.typeClient)
                 },
             };
-            console.log(cliente);
             return axios({ url: "/client/", method: "POST", data: JSON.stringify(cliente) })
                 .then((response) => {
                     if (!response.error) {

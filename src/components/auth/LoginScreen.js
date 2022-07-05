@@ -45,6 +45,7 @@ export const LoginScreen = (props) => {
       })
         .then((response2) => {
           if (!response2.error) {
+            authContext.signIn(response2.data)
             let user = response2.data.user.username;
             axios({ url: "/user/", method: "GET" })
               .then((response) => {
@@ -59,18 +60,16 @@ export const LoginScreen = (props) => {
                 }
                 if (exist) {
                   if (actual.status.id === 1) {
-                    authContext.signIn(response2.data.token, response2.data.user.username, response2.data.user)
-                    //asignar los roles
                     let authorities = response2.data.user.authorities;
                     let directivo, coordinador, rape, rd;
                     for (let i = 0; i < authorities.length; i++) {
                       if (authorities[i].authority === "Coordinador") {
                         coordinador = true;
                       }
-                      if (authorities[i].authority === "Responsable de Proyecto") {
+                      if (authorities[i].authority === "RD") {
                         rape = true;
                       }
-                      if (authorities[i].authority === "Responsable de Desarrollo") {
+                      if (authorities[i].authority === "RAPE") {
                         rd = true;
                       }
                       if (authorities[i].authority === "Directivo") {
@@ -105,10 +104,6 @@ export const LoginScreen = (props) => {
         });
     },
   });
-
-  const handleCancel = () => {
-    navigation("/");
-  };
 
   useEffect(() => {
     document.title = "PANAPO | Login";

@@ -57,7 +57,6 @@ export const ProjectStart = ({
   const onDelete = async () => {
     let programadores = [];
     programadores = programmers
-    console.log(programmers)
     Alert.fire({
       title: titleConfirmacion,
       confirmButtonText: "Eliminar",
@@ -74,11 +73,8 @@ export const ProjectStart = ({
             let temp = programadores.filter(item => item.id !== value)
             setProgrammers(temp)
             setNum(temp.length)
-            console.log("aaaa")
           }
         }
-        // console.log(programadores)
-        // console.log(programmers)
         setIsLoading(false)
         Alert.fire({
           title: "Programador eliminado correctamente",
@@ -108,7 +104,6 @@ export const ProjectStart = ({
       if (!exists) {
         await axios({ url: "/person/" + value, method: "GET" })
           .then(async (response) => {
-            console.log(response)
             let data = [
               {
                 id: response.data.id,
@@ -126,10 +121,8 @@ export const ProjectStart = ({
           });
         setProgrammers(programadores)
         setNum(programadores.length)
-        console.log(programmers)
         setIsLoading(false)
       } else {
-        console.log("error")
         setIsLoading(false)
         setIsRepeat("No se puede agregar a la misma persona")
       }
@@ -189,7 +182,6 @@ export const ProjectStart = ({
         setIsLoading(false);
       })
       .catch((error) => {
-        console.log(error);
       });
   };
 
@@ -220,12 +212,10 @@ export const ProjectStart = ({
         let data = response.data;
         let becaTemp = data.filter(item => item.profession.description === "Becario")
         setPersonal(becaTemp);
-        console.log(becaTemp);
         setDisponibles(becaTemp.length)
         setIsLoading(false);
       })
       .catch((error) => {
-        console.log(error);
       });
   };
 
@@ -300,11 +290,9 @@ export const ProjectStart = ({
           numberBeca: num
         };
       }
-      //console.log(project);
       axios({ url: "/project/", method: "PUT", data: JSON.stringify(project) })
         .then((response) => {
           if (!response.error) {
-            console.log("proyecto")
           }
         })
         .catch((error) => {
@@ -322,11 +310,9 @@ export const ProjectStart = ({
           id: 1
         }
       }
-      console.log(rdTemp);
       axios({ url: "/personteam/", method: "POST", data: JSON.stringify(rdTemp) })
         .then(async (response) => {
           if (!response.error) {
-            console.log("rd")
             let rapeTemp = {
               project: {
                 id: values.id
@@ -338,11 +324,9 @@ export const ProjectStart = ({
                 id: 2
               }
             }
-            console.log(rapeTemp);
             await axios({ url: "/personteam/", method: "POST", data: JSON.stringify(rapeTemp) })
               .then((response) => {
                 if (!response.error) {
-                  console.log("rape")
                 }
               })
               .catch((error) => {
@@ -371,7 +355,6 @@ export const ProjectStart = ({
         axios({ url: "/personteam/", method: "POST", data: JSON.stringify(tempProg) })
           .then((response) => {
             if (!response.error) {
-              console.log("yes")
             }
           })
           .catch((error) => {

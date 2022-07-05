@@ -13,18 +13,16 @@ library.add(faUser, faFile, faInfo);
 
 export const ChangeRol = () => {
   const navigation = useNavigate();
-    const { authContext } = useContext(AuthContext);
+    const { authContext, state } = useContext(AuthContext);
 
     const logout = () =>{
         authContext.signOut();
         navigation("/", { replace: true });
     }
-
-  let coordinador = localStorage.getItem("coordinador")
-  let rd = localStorage.getItem("rd")
-  let rape = localStorage.getItem("rape")
-  let directivo = localStorage.getItem("directivo")
-  let rolActivo = localStorage.getItem("rolActive");
+  let coordinador = state.coordinador
+  let rd = state.rd
+  let rape = state.rape
+  let directivo = state.directivo
   let username = localStorage.getItem("username");
 
   useEffect(() => {

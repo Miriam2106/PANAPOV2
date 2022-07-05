@@ -91,11 +91,9 @@ export const ProjectList = () => {
         axios({ url: "/project/", method: "GET" })
             .then((response) => {
                 let data = response.data;
-                console.log(data)
                 let prospectTemp = data.filter(item => item.statusProject.description === "Prospecto")
                 setProjectsProspect(prospectTemp);
                 setIsLoading(false);
-                //console.log(prospectTemp)
             })
             .catch((error) => {
                 console.log(error);
@@ -235,7 +233,6 @@ export const ProjectList = () => {
                 <Button variant="primary" size="md"
                     onClick={() => {
                         setValues(row)
-                        console.log(row)
                         setIsOpenDetails(true)
                     }}>
                     <FontAwesomeIcon className="btnS" icon={faInfo} size="lg" />
@@ -333,7 +330,6 @@ export const ProjectList = () => {
                 <Button variant="success" size="md"
                     onClick={() => {
                         setValues(row)
-                        console.log(row)
                         setIsOpenStart(true)
                     }}>
                     <FontAwesomeIcon icon={faPlay} size="lg" className="btnS" />
@@ -391,7 +387,6 @@ export const ProjectList = () => {
                     },
                 };
             }
-            //console.log(project);
             return axios({ url: "/project/", method: "POST", data: JSON.stringify(project) })
                 .then((response) => {
                     if (!response.error) {

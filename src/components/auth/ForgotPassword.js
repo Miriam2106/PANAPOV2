@@ -28,7 +28,6 @@ export const ForgotPassword = () => {
             username: yup.string().required("Campo obligatorio"),
         }),
         onSubmit: (values) => {
-            console.log(values);
             return axios({ url: "/user/password/", method: "POST", data: JSON.stringify(values) })
                 .then((response) => {
                     if (!response.error) {

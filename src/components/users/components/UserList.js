@@ -61,7 +61,6 @@ export const UserList = () => {
     const getRol = () => {
         axios({ url: "/rol/", method: "GET" })
             .then((response) => {
-                console.log(response);
                 let data = response.data;
                 let rolesTemp = data.filter(item => item.description !== "Directivo" && item.description !== "Coordinador")
                 setRol(rolesTemp);
@@ -82,13 +81,12 @@ export const UserList = () => {
                     for (let r = 0; r < userTemp[i].authorities.length; r++) {
                         let newData = {
                             ...userTemp[i],
-                            authority: userTemp[i].authorities[r].description
+                            authority: userTemp[i].authorities[r].acronym
                         }
                         tempData.push(newData)
                     }
                 }
                 setUsers(tempData);
-                console.log(tempData)
                 setIsLoading(false);
                 return response;
             })
@@ -96,6 +94,13 @@ export const UserList = () => {
 
             });
     };
+
+    const filteredItems = users.filter(
+        (item) => item.authority && item.authority.toLowerCase().includes(filterText.toLowerCase()) || 
+        item.person.name && item.person.name.toLowerCase().includes(filterText.toLowerCase()) ||
+        item.person.surname && item.person.surname.toLowerCase().includes(filterText.toLowerCase()) ||
+        item.person.secondSurname && item.person.secondSurname.toLowerCase().includes(filterText.toLowerCase())
+    );
 
     const columns = [
         {
@@ -258,7 +263,6 @@ export const UserList = () => {
                 .required("Campo obligatorio"),
         }),
         onSubmit: (values) => {
-            //console.log(values.authorities)
             axios({ url: "/user/", method: "GET" })
                 .then((response) => {
                     let exist = false;
@@ -299,10 +303,8 @@ export const UserList = () => {
                             ...data,
                             authorities: auth
                         }
-                        console.log(data)
                         axios({ url: "/user/rol/", method: "PUT", data: JSON.stringify(data) })
                             .then((response) => {
-                                console.log(response)
                                 if (!response.error) {
                                     getUser();
                                     getPerson();
@@ -324,7 +326,6 @@ export const UserList = () => {
                     } else {
                         axios({ url: "/person/" + values.username, method: "GET" })
                             .then((response) => {
-                                console.log(response)
                                 if (!response.error) {
                                     let insert = {
                                         authorities: [
@@ -337,7 +338,6 @@ export const UserList = () => {
                                     }
                                     axios({ url: "/user/save/", method: "POST", data: JSON.stringify(insert) })
                                         .then((response) => {
-                                            console.log(response)
                                             if (!response.error) {
                                                 getUser();
                                                 getPerson();
@@ -476,7 +476,7 @@ export const UserList = () => {
                             <Card.Body>
                                 <DataTable
                                     columns={columns}
-                                    data={users}
+                                    data={filteredItems}
                                     noDataComponent={<AlertData title={"No hay registros"} />}
                                     pagination
                                     paginationComponentOptions={paginationOptions}

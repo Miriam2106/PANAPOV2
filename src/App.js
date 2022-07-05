@@ -4,8 +4,7 @@ import { AppRouter } from "./components/routes/AppRouter";
 
 
 const App = () => {
-
-  //const [user, dispatch] = useReducer (authReducer, {}, init);
+  var CryptoJS = require("crypto-js");
 
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
@@ -25,7 +24,7 @@ const App = () => {
           return {
             ...prevState,
             isSignOut: true,
-            userToken: action.token,
+            userToken: null,
             directior: null,
             coordinador: null,
             rape: null,
@@ -74,11 +73,15 @@ const App = () => {
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async (token, username, user) => {
+      signIn: async (user) => {
+        let secret = "4_p(0cw@7zb28bd!^1&3&rhk%x08z1wr6bnrdw#&q7to%=map_"
+        let token = user.token
         dispatch({ type: 'SIGN_IN', token: token });
-        localStorage.setItem('token', token);
-        localStorage.setItem('username', username);
-        localStorage.setItem('user', user);
+        var ciphertext = CryptoJS.AES.encrypt(user.token, secret).toString();
+
+        localStorage.setItem('user', ciphertext);
+        localStorage.setItem('username', user.user.username);
+
       },
       signOut: async () => {
         dispatch({ type: 'SIGN_OUT', token: null });
@@ -87,84 +90,106 @@ const App = () => {
         dispatch({ type: 'DIRECTIVO', enable: null });
         dispatch({ type: 'COORDINADOR', enable: null });
         dispatch({ type: 'ROL_ACTIVE', rol: null });
-        localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('username');
-        localStorage.removeItem('rd');
-        localStorage.removeItem('rape');
-        localStorage.removeItem('directivo');
-        localStorage.removeItem('coordinador');
-        localStorage.removeItem('rolActive');
+        localStorage.removeItem('roles');
+        localStorage.removeItem('userRol');
       },
       getRoles: () => {
         return state.directivo
       },
       setRoles: async (directivo, coordinador, rape, rd) => {
         if (rape == true) {
-          dispatch({ type: 'RAPE', enable: true });
+          dispatch({ type: 'RAPE', enable: "true" });
           dispatch({ type: 'ROL_ACTIVE', rol: "RAPE" });
-          localStorage.setItem("rape", "true")
-          localStorage.setItem("rolActive", "RAPE")
+          var ciphertext = CryptoJS.AES.encrypt("RAPE", secret).toString();
+          localStorage.setItem('userRol', ciphertext);
         }
         if (rd == true) {
-          dispatch({ type: 'RD', enable: true });
+          dispatch({ type: 'RD', enable: "true" });
           dispatch({ type: 'ROL_ACTIVE', rol: "RD" });
-          localStorage.setItem("rd", "true")
-          localStorage.setItem("rolActive", "RD")
+          var ciphertext = CryptoJS.AES.encrypt("RD", secret).toString();
+          localStorage.setItem('userRol', ciphertext);
         }
         if (directivo == true) {
-          dispatch({ type: 'DIRECTIVO', enable: true });
+          dispatch({ type: 'DIRECTIVO', enable: "true" });
           dispatch({ type: 'ROL_ACTIVE', rol: "DIRECTIVO" });
-          localStorage.setItem("directivo", "true")
-          localStorage.setItem("rolActive", "DIRECTIVO")
+          var ciphertext = CryptoJS.AES.encrypt("DIRECTIVO", secret).toString();
+          localStorage.setItem('userRol', ciphertext);
         }
         if (coordinador == true) {
-          dispatch({ type: 'COORDINADOR', enable: true });
+          dispatch({ type: 'COORDINADOR', enable: "true" });
           dispatch({ type: 'ROL_ACTIVE', rol: "COORDINADOR" });
-          localStorage.setItem("coordinador", "true")
-          localStorage.setItem("rolActive", "COORDINADOR")
+
+          var ciphertext = CryptoJS.AES.encrypt("COORDINADOR", secret).toString();
+          localStorage.setItem('userRol', ciphertext);
         }
+
+        let roles = {
+          "RAPE": rape,
+          "COORDINADOR": coordinador,
+          "RD": rd,
+          "DIRECTIVO": directivo
+        }
+        var ciphertext = CryptoJS.AES.encrypt(JSON.stringify(roles), secret).toString();
+        localStorage.setItem('roles', ciphertext);
       },
       setRoleActive: (rol) => {
         dispatch({ type: 'ROL_ACTIVE', rol: rol });
-        if (rol === "COORDINADOR") {
-          localStorage.setItem("rolActive", "COORDINADOR")
-        } else if (rol === "DIRECTIVO") {
-          localStorage.setItem("rolActive", "DIRECTIVO")
-        } if (rol === "RD") {
-          localStorage.setItem("rolActive", "RD")
-        } if (rol === "RAPE") {
-          localStorage.setItem("rolActive", "RAPE")
-        }
       }
-
     }),
     []
   );
+
+  let secret = "4_p(0cw@7zb28bd!^1&3&rhk%x08z1wr6bnrdw#&q7to%=map_";
+
   useEffect(() => {
-    let coordinador = localStorage.getItem("coordinador");
-    let rd = localStorage.getItem("rd");
-    let rape = localStorage.getItem("rape");
-    let directivo = localStorage.getItem("directivo");
-    let rolActivo = localStorage.getItem("rolActive");
+    let cipherRoles = localStorage.getItem("roles") || null
+    let decryptedData;
+    let coordinador =  null
+    let rd =null
+    let rape =  null
+    let directivo = null
 
-    let token = localStorage.getItem("token");
-
-    if (coordinador === "true") {
-      dispatch({ type: 'COORDINADOR', enable: true });
-    }
-    if (rd === "true") {
-      dispatch({ type: 'RD', enable: true });
-    }
-    if (rape === "true") {
-      dispatch({ type: 'RAPE', enable: true });
-    }
-    if (directivo === "true") {
-      dispatch({ type: 'DIRECTIVO', enable: true });
+    if (cipherRoles) {
+      var bytes = CryptoJS.AES.decrypt(cipherRoles, secret);
+      decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      coordinador = decryptedData.COORDINADOR 
+      rd = decryptedData.RD
+      rape = decryptedData.RAPE
+      directivo = decryptedData.DIRECTIVO
     }
 
-    dispatch({ type: 'ROL_ACTIVE', rol: rolActivo });
-    dispatch({ type: 'RESTORE_TOKEN', token: token });
+    let userRol = localStorage.getItem("userRol") || null
+    var originalRol;
+    var originalToken
+
+    if (userRol) {
+      var bytes = CryptoJS.AES.decrypt(userRol, secret);
+      originalRol = bytes.toString(CryptoJS.enc.Utf8);
+      dispatch({ type: 'ROL_ACTIVE', rol: originalRol });
+    }
+
+    let ciphertext = localStorage.getItem("user") || null
+    if (ciphertext) {
+      var bytes = CryptoJS.AES.decrypt(ciphertext, secret);
+      originalToken = bytes.toString(CryptoJS.enc.Utf8);
+      dispatch({ type: 'RESTORE_TOKEN', token: originalToken });
+    }
+
+    if (coordinador === true) {
+      dispatch({ type: 'COORDINADOR', enable: "true" });
+    }
+    if (rd === true) {
+      dispatch({ type: 'RD', enable: "true" });
+    }
+    if (rape === true) {
+      dispatch({ type: 'RAPE', enable: "true" });
+    }
+    if (directivo === true) {
+      dispatch({ type: 'DIRECTIVO', enable: "true" });
+    }
+    
   }, []);
 
   return (

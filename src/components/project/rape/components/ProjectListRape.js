@@ -61,7 +61,6 @@ export const ProjectListRape = () => {
     await axios({ url: "/project/", method: "GET" })
       .then((response) => {
         let data = response.data;
-        console.log(data);
         let arrTemp = []
         for (let r = 0; r < data.length; r++) {
           for (let m = 0; m < data[r].team.length; m++) {
@@ -212,7 +211,6 @@ export const ProjectListRape = () => {
             size="md"
             onClick={() => {
               setValues(row);
-              console.log(row)
               setIsOpenCreateReport(true);
             }}
           >

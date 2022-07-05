@@ -47,7 +47,6 @@ export const ProjectCreate = ({
                 },
                 date: finalDate
             };
-            console.log(report);
             axios({ url: "/report/", method: "POST", data: JSON.stringify(report) })
                 .then((response) => {
                     if (!response.error) {
@@ -106,12 +105,10 @@ export const ProjectCreate = ({
                 },
                 porcentaje: values.inicio
             }
-            console.log(fase);
             //1
             axios({ url: "/reportphases/", method: "POST", data: JSON.stringify(fase) })
                 .then((response) => {
                     if (!response.error) {
-                        console.log("inicio")
                     }
                 })
                 .catch((error) => {
@@ -137,7 +134,6 @@ export const ProjectCreate = ({
             axios({ url: "/reportphases/", method: "POST", data: JSON.stringify(fase) })
                 .then((response) => {
                     if (!response.error) {
-                        console.log("req")
                     }
                 })
                 .catch((error) => {
@@ -163,7 +159,6 @@ export const ProjectCreate = ({
             axios({ url: "/reportphases/", method: "POST", data: JSON.stringify(fase) })
                 .then((response) => {
                     if (!response.error) {
-                        console.log("analisis")
                     }
                 })
                 .catch((error) => {
@@ -189,7 +184,6 @@ export const ProjectCreate = ({
             axios({ url: "/reportphases/", method: "POST", data: JSON.stringify(fase) })
                 .then((response) => {
                     if (!response.error) {
-                        console.log("construccion")
                     }
                 })
                 .catch((error) => {
@@ -215,7 +209,6 @@ export const ProjectCreate = ({
             axios({ url: "/reportphases/", method: "POST", data: JSON.stringify(fase) })
                 .then((response) => {
                     if (!response.error) {
-                        console.log("integracion")
                     }
                 })
                 .catch((error) => {
@@ -241,7 +234,6 @@ export const ProjectCreate = ({
             axios({ url: "/reportphases/", method: "POST", data: JSON.stringify(fase) })
                 .then((response) => {
                     if (!response.error) {
-                        console.log("cierre")
                     }
                 })
                 .catch((error) => {

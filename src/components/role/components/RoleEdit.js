@@ -37,7 +37,6 @@ export const RoleEdit = ({
     });
     formikModify.values.acronym = acronym;
     formikModify.values.description = description;
-    console.log(values);
   }, [isOpenUpdate]);
 
   const formikModify = useFormik({
@@ -52,14 +51,12 @@ export const RoleEdit = ({
         ...valuesFormik,
         id: id,
       };
-      //console.log(rol);
       return axios({
         url: "/rol/",
         method: "PUT",
         data: JSON.stringify(rol),
       })
         .then((response) => {
-          console.log(response);
           if (!response.error) {
             handleCloseForm();
             getRoles();

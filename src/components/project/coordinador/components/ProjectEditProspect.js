@@ -80,7 +80,6 @@ export const ProjectEditProspect = ({
             id: parseInt(valuesFormik.project),
           }
         };
-        console.log(prospect);
       } else {
         prospect = {
           ...valuesFormik,
@@ -90,7 +89,6 @@ export const ProjectEditProspect = ({
           },
           project: null
         };
-        console.log(prospect);
       }
       return axios({
         url: "/project/",
@@ -182,7 +180,6 @@ export const ProjectEditProspect = ({
     formikModify.values.project = project !== null ? project?.id : "";
     formikModify.values.statusProject = statusProject;
     formikModify.values.priceClient = priceClient;
-    //console.log(formikModify.values.project)
     getProjects();
     getClients();
   }, [isOpenUpdateP]);

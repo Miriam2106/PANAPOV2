@@ -46,7 +46,6 @@ export const DirectionList = () => {
                 let data = response.data;
                 let directivesTemp = data.filter(item => item.person.profession.description === "Directivo")
                 setDirectives(directivesTemp);
-                console.log(directivesTemp)
                 setIsLoading(false);
             })
             .catch((error) => {
@@ -139,7 +138,6 @@ export const DirectionList = () => {
                     description: "Activo"
                 }
             };
-            console.log(person)
             return axios({ url: "/user/", method: "POST", data: JSON.stringify(person) })
                 .then((response) => {
                     if (!response.error) {

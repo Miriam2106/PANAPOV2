@@ -32,7 +32,6 @@ export const RecoverPassword = () => {
             code: yup.string().required("Campo obligatorio"),
         }),
         onSubmit: (values) => {
-            console.log(values);
             if (values.password !== values.confirmPassword) {
                 Alert.fire({
                     title: "Verifique los datos",

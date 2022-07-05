@@ -91,7 +91,6 @@ export const DirectionEdit = ({
             ...dataPerson,
             password: valuesFormik.password,
           }
-          console.log(data)
           //modificar usuario
           return axios({ url: "/user/update", method: "PUT", data: JSON.stringify(data) })
             .then((response) => {

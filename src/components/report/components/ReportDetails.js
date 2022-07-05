@@ -30,7 +30,6 @@ export const ReportDetails = ({
       stageReal: stageReal
     })
     getAvances()
-    console.log(data)
   }, [isOpen])
 
   const handleChange = (event) => {
@@ -96,7 +95,6 @@ export const ReportDetails = ({
           }
         }
         setAvance(temp)
-        console.log(temp)
       })
       .catch((error) => {
         console.log(error);

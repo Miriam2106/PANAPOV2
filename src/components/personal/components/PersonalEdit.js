@@ -73,7 +73,6 @@ export const PersonalEdit = ({
                 data: JSON.stringify(person),
             })
                 .then((response) => {
-                    console.log(response);
                     if (!response.error) {
                         handleCloseForm();
                         getPersonal();

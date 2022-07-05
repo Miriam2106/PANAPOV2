@@ -25,7 +25,6 @@ export const ProjectReports = ({
     setValues({
       data: data, name: name, dateEnd: dateEnd, dateStart: dateStart 
     })
-    console.log(dateEnd)
     document.title = "PANAPO | Reportes";
     getReport();
   }, [])
@@ -77,13 +76,13 @@ export const ProjectReports = ({
       compact: true
     },
     {
-      name: <h6>Etapa real</h6>,
+      name: <h6>Etapa real (APE)</h6>,
       cell: (row) => <div className="txt4">{row.stageReal}</div>,
       center: true,
       compact: true
     },
     {
-      name: <h6>Fase real</h6>,
+      name: <h6>Fase real (DMS)</h6>,
       cell: (row) => <div className="txt4">{row.phaseReal}</div>,
       center: true,
       compact: true
@@ -104,7 +103,6 @@ export const ProjectReports = ({
         <Button variant="primary" size="md"
           onClick={() => {
             setValues(row)
-            console.log(row)
             setIsOpen(true)
           }}>
           <FontAwesomeIcon icon={faBars} size="lg" className="btnS" />

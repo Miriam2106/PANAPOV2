@@ -76,7 +76,6 @@ export const ClientEdit = ({
                     id: parseInt(valuesFormik.typeClient)
                 },
             };
-            console.log(cliente);
             return axios({
                 url: "/client/",
                 method: "PUT",

@@ -48,12 +48,10 @@ export const ProjectListRd = () => {
         await axios({ url: "/project/", method: "GET" })
             .then((response) => {
                 let data = response.data;
-                console.log(data);
                 let arrTemp = []
                 for (let r = 0; r < data.length; r++) {
                     for (let m = 0; m < data[r].team.length; m++) {
                         let temp = data[r];
-                        console.log(data[r].team[m].rolProject.description + " " + data[r].team[m].person.email)
                         if (data[r].team[m].rolProject.description === "RD" && data[r].team[m].person.email === username) {
                             arrTemp.push(temp)
                         }
@@ -78,7 +76,6 @@ export const ProjectListRd = () => {
                     }
                 }
                 setProjectsRd(projectTemp);
-                console.log(projectTemp);
                 setIsLoading(false);
             })
             .catch((error) => {

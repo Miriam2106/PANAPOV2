@@ -32,7 +32,8 @@ export const PersonalList = () => {
     const filteredItems = personal.filter(
         (item) => item.name && item.name.toLowerCase().includes(filterText.toLowerCase()) ||
             item.surname && item.surname.toLowerCase().includes(filterText.toLowerCase()) ||
-            item.secondSurname && item.secondSurname.toLowerCase().includes(filterText.toLowerCase())
+            item.secondSurname && item.secondSurname.toLowerCase().includes(filterText.toLowerCase()) ||
+            item.email && item.email.toLowerCase().includes(filterText.toLowerCase())
     );
 
     //Obtener todos los registros
